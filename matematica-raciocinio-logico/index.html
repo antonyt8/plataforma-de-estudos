@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemática - Mapas & Questões</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+    <script src="../assets/js/study-map-app.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-orange-600 text-white p-4 rounded-full shadow-xl hover:bg-orange-700 transition-colors">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-orange-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-orange-300"></i>
+                    Matemática
+                </h1>
+                <p class="text-xs text-orange-200 mt-1 font-medium">Mapas & Questões</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-orange-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-orange-600 hover:text-orange-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar assunto..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition-colors">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2" id="materiasCount">
+                Tópicos
+            </h2>
+            <nav id="subjectList" class="space-y-1.5 pb-20 md:pb-0">
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm justify-between shrink-0">
+            <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 w-1/3">
+                <i class="fa-solid fa-table-columns"></i>
+                <span id="headerTitle" class="truncate font-medium"></span>
+            </div>
+
+            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center shrink-0">
+                <button id="tabMap" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Mapa Mental</span>
+                    <span class="sm:hidden">Teoria</span>
+                </button>
+                <button id="tabQuiz" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span class="hidden sm:inline">Questões Práticas</span>
+                    <span class="sm:hidden">Questões</span>
+                </button>
+            </div>
+
+            <div class="w-1/3 hidden md:block"></div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="mapContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+            </div>
+
+            <div id="quizContainer" class="hidden h-full fade-in pb-20">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mindMapData = [
+            {
+                id: 'conjuntos', title: 'Conjuntos Numericos', color: 'bg-orange-500',
+                nodes: [
+                    { title: 'Numeros Naturais (N)', content: '0, 1, 2, 3, ... - usados para contar e ordenar.' },
+                    { title: 'Numeros Inteiros (Z)', content: '..., -2, -1, 0, 1, 2, ... - incluem positivos, negativos e zero.' },
+                    { title: 'Numeros Racionais (Q)', content: 'Fracoes a/b onde a e b sao inteiros e b não e zero.' },
+                    { title: 'Numeros Irracionais', content: 'Numeros que não podem ser expressos como fracao (pi, raiz de 2).' },
+                    { title: 'Numeros Reais (R)', content: 'Unia de racionais e irracionais.' }
+                ]
+            },
+            {
+                id: 'operacoes_aritmeticas', title: 'Operacoes Aritmeticas', color: 'bg-amber-500',
+                nodes: [
+                    { title: 'Adicao e Subtracao', content: 'Combinacao de quantidades e remocao de quantidades.' },
+                    { title: 'Multiplicacao', content: 'Repeticao de uma quantidade um numero de vezes.' },
+                    { title: 'Divisao', content: 'Distribuicao de uma quantidade em partes iguais.' },
+                    { title: 'Potenciacao', content: 'Multiplicacao repetida de um numero por si mesmo.' }
+                ]
+            },
+            {
+                id: 'proporcionalidade', title: 'Proporcionalidade', color: 'bg-yellow-500',
+                nodes: [
+                    { title: 'Proporcao Direta', content: 'Quando uma grandeza aumenta, a outra também aumenta.' },
+                    { title: 'Proporcao Inversa', content: 'Quando uma grandeza aumenta, a outra diminui.' },
+                    { title: 'Regra de Tres Simples', content: 'Encontra um valor desconhecido em uma proporcao.' },
+                    { title: 'Regra de Tres Composta', content: 'Envolvimento de mais de duas grandezas.' }
+                ]
+            },
+            {
+                id: 'porcentagem', title: 'Porcentagem', color: 'bg-lime-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Representacao de uma parte de 100.' },
+                    { title: 'Calculo de Porcentagem', content: 'P% = (Parte / Total) x 100.' },
+                    { title: 'Aumento e Desconto', content: 'Aplicaco de porcentagem em operacoes comerciais.' },
+                    { title: 'Juros Simples', content: 'Juros = Capital x Taxa x Tempo.' }
+                ]
+            },
+            {
+                id: 'estatistica', title: 'Estatistica', color: 'bg-green-500',
+                nodes: [
+                    { title: 'Media', content: 'Soma de todos os valores dividida pela quantidade de valores.' },
+                    { title: 'Mediana', content: 'Valor central quando os dados estao ordenados.' },
+                    { title: 'Moda', content: 'Valor que aparece com maior frequencia.' },
+                    { title: 'Desvio Padrao', content: 'Medida de dispersao dos dados em relação a media.' }
+                ]
+            },
+            {
+                id: 'logica_raciocinio', title: 'Raciocinio Logico', color: 'bg-teal-500',
+                nodes: [
+                    { title: 'Proposicoes', content: 'Afirmacoes que sao verdadeiras ou falsas.' },
+                    { title: 'Conectivos Logicos', content: 'E, OU, NÃO, SE..ENTÃO.' },
+                    { title: 'Tabelas Verdade', content: 'Representacao de todas as combinacoes de verdade.' },
+                    { title: 'Silogismo', content: 'Argumento com premissas e conclusao.' }
+                ]
+            }
+        ];
+
+        const questionsData = [
+            { id: 1, subjectId: 'porcentagem', text: 'Um produto custa 100 reais e sofre um desconto de 20%. Qual e o novo preco?', options: ['60 reais', '70 reais', '80 reais', '90 reais', '110 reais'], correctAnswer: 2, explanation: 'Correto! Desconto de 20% = 100 x 0.20 = 20. Novo preco = 100 - 20 = 80 reais.' },
+            { id: 2, subjectId: 'proporcionalidade', text: 'Se 5 trabalhadores constroem uma casa em 20 dias, quantos dias levarao 10 trabalhadores?', options: ['40 dias', '20 dias', '10 dias', '15 dias', '5 dias'], correctAnswer: 2, explanation: 'Corretamente inversa! Mais trabalhadores = menos dias. 10 trabalhadores farao em 10 dias.' }
+        ];
+
+        StudyMapApp.init({
+            mindMapData,
+            questionsData,
+            countLabel: (document.getElementById("materiasCount")?.textContent || "Topicos").trim()
+        });
+    </script>
+</body>
+</html>

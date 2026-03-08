@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro de Questões - QConcursos</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        .link-card {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .link-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-card:focus-within {
+            outline: 2px solid #4f46e5;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-indigo-600 text-white p-4 rounded-full shadow-xl hover:bg-indigo-700 transition-colors" aria-label="Abrir menu">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-indigo-300"></i>
+                    Filtro de Questões
+                </h1>
+                <p class="text-xs text-indigo-200 mt-1 font-medium">QConcursos</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-indigo-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar matéria..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" aria-label="Procurar matéria">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">
+                Matérias
+            </h2>
+            <nav id="subjectList" class="space-y-1.5 pb-20 md:pb-0">
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm shrink-0">
+            <div class="flex items-center gap-2 text-sm text-slate-600 w-full">
+                <i class="fa-solid fa-external-link"></i>
+                <span id="headerTitle" class="truncate font-medium">Selecione uma matéria para ver os filtros</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="contentContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+                <div class="text-center text-slate-500 py-12">
+                    <i class="fa-solid fa-arrow-left text-4xl mb-4 opacity-50"></i>
+                    <p>Escolha uma matéria no menu para ver os filtros de questões</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const filtersData = [
+            {
+                id: 'lingua-portuguesa',
+                name: 'Língua Portuguesa',
+                icon: 'fa-pen',
+                color: 'bg-blue-500',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23002227&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=1&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'informatica',
+                name: 'Noções de Informática',
+                icon: 'fa-computer',
+                color: 'bg-emerald-500',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?discipline_ids[]=46&examining_board_ids[]=2&exclude_nullified=true&exclude_outdated=true&my_questions=not_resolved&per_page=20&sort=newest&subject_ids[]=237&subject_ids[]=241&subject_ids[]=247&subject_ids[]=323&subject_ids[]=324&subject_ids[]=825&subject_ids[]=1103&subject_ids[]=3597&subject_ids[]=4849&subject_ids[]=6297&subject_ids[]=6298&subject_ids[]=11848&subject_ids[]=16711&subject_ids[]=16722&subject_ids[]=21498&subject_ids[]=27887'
+            },
+            {
+                id: 'matematica',
+                name: 'Matemática / Raciocínio Lógico',
+                icon: 'fa-calculator',
+                color: 'bg-purple-500',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23002290&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=13&subject_ids[]=14554&subject_ids[]=14560&subject_ids[]=14566&subject_ids[]=14570&subject_ids[]=21769&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'historia',
+                name: 'História (Geral e de Alagoas)',
+                icon: 'fa-book',
+                color: 'bg-amber-600',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23002476&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=550&subject_ids[]=14903&subject_ids[]=14904&subject_ids[]=14905&subject_ids[]=14906&subject_ids[]=14908&subject_ids[]=14910&subject_ids[]=14913&subject_ids[]=14914&subject_ids[]=14918&subject_ids[]=16598&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'geografia',
+                name: 'Geografia (Geral e de Alagoas)',
+                icon: 'fa-globe',
+                color: 'bg-green-600',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23002563&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=73&subject_ids[]=14708&subject_ids[]=14722&subject_ids[]=14729&subject_ids[]=14753&subject_ids[]=14754&subject_ids[]=26456&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'legislacao-especifica',
+                name: 'Legislação Específica (PMAL)',
+                icon: 'fa-gavel',
+                color: 'bg-red-600',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23026191&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=9&discipline_ids[]=61&subject_ids[]=796&subject_ids[]=16667&subject_ids[]=16674&subject_ids[]=16691&subject_ids[]=21064&subject_ids[]=21065&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'direito-administrativo',
+                name: 'Direito Administrativo',
+                icon: 'fa-briefcase',
+                color: 'bg-indigo-600',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23026206&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=2&subject_ids[]=5&subject_ids[]=10&subject_ids[]=11&subject_ids[]=853&subject_ids[]=2294&subject_ids[]=15938&subject_ids[]=15940&subject_ids[]=27513&subject_ids[]=27522&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'direito-constitucional',
+                name: 'Direito Constitucional',
+                icon: 'fa-law',
+                color: 'bg-slate-700',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23026221&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=3&subject_ids[]=436&subject_ids[]=437&subject_ids[]=438&subject_ids[]=868&subject_ids[]=1979&subject_ids[]=16249&subject_ids[]=16256&subject_ids[]=16321&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'direito-penal-processual',
+                name: 'Direito Penal / Processual Penal',
+                icon: 'fa-scale-balanced',
+                color: 'bg-rose-700',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23026237&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=10&subject_ids[]=149&subject_ids[]=150&exclude_nullified=true&exclude_outdated=true'
+            },
+            {
+                id: 'direitos-humanos',
+                name: 'Direitos Humanos',
+                icon: 'fa-heart',
+                color: 'bg-pink-600',
+                url: 'https://www.qconcursos.com/questoes-de-concursos/questoes?stored_filter_id=23026258&my_questions=not_resolved&examining_board_ids[]=2&discipline_ids[]=214&subject_ids[]=18760&subject_ids[]=18797&exclude_nullified=true&exclude_outdated=true'
+            }
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const subjectList = document.getElementById('subjectList');
+        const contentContainer = document.getElementById('contentContainer');
+        const headerTitle = document.getElementById('headerTitle');
+        const mobileOpenBtn = document.getElementById('mobileOpenBtn');
+        const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        let currentSelection = null;
+
+        function renderSubjectList(filtered = false) {
+            subjectList.innerHTML = '';
+            const query = searchInput.value.toLowerCase();
+            const toShow = filtered ? filtersData.filter(item => item.name.toLowerCase().includes(query)) : filtersData;
+
+            toShow.forEach(filter => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = `block px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer a11y-focus ${
+                    currentSelection === filter.id 
+                        ? 'bg-indigo-100 text-indigo-700' 
+                        : 'text-slate-700 hover:bg-slate-100'
+                }`;
+                link.setAttribute('role', 'button');
+                link.setAttribute('aria-label', `Ver filtro de ${filter.name}`);
+                link.innerHTML = `<i class="fa-solid ${filter.icon} mr-2"></i>${filter.name}`;
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    selectSubject(filter);
+                    if (window.innerWidth < 768) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                });
+
+                link.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectSubject(filter);
+                    }
+                });
+
+                subjectList.appendChild(link);
+            });
+        }
+
+        function selectSubject(filter) {
+            currentSelection = filter.id;
+            headerTitle.textContent = filter.name;
+            renderContent(filter);
+            renderSubjectList(!!searchInput.value);
+        }
+
+        function renderContent(filter) {
+            contentContainer.innerHTML = `
+                <div class="fade-in">
+                    <div class="mb-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 ${filter.color} rounded-lg flex items-center justify-center text-white">
+                                <i class="fa-solid ${filter.icon} text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-slate-900">${filter.name}</h2>
+                                <p class="text-slate-500 text-sm mt-1">Questões não resolvidas - QConcursos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <div class="link-card bg-white border border-slate-200 rounded-lg p-6 hover:shadow-lg transition-all">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-external-link text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-slate-900">Abrir Filtro de Questões</h3>
+                                        <p class="text-sm text-slate-500 mt-0.5">Clique para acessar o QConcursos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="${filter.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors a11y-focus">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                Abrir QConcursos
+                            </a>
+                            <p class="text-xs text-slate-400 mt-4">Abre em nova aba. Filtrado para questões não resolvidas e sem nulidade.</p>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-info-circle text-blue-600 mt-1 shrink-0"></i>
+                                <div>
+                                    <h4 class="font-semibold text-blue-900">Dica</h4>
+                                    <p class="text-sm text-blue-800 mt-1">Use o menu "Mapa Mental" para estudar a teoria antes de fazer as questões!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            renderSubjectList(true);
+        });
+
+        // Mobile menu
+        mobileOpenBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+
+        mobileCloseBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Init subject list
+        renderSubjectList();
+
+        // Accessibility styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .a11y-focus:focus-visible {
+                outline: 2px solid #4f46e5;
+                outline-offset: 2px;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

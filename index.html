@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Estudos PMAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Sora:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
+  </head>
+  <body>
+    <button class="mobile-toggle" data-mobile-toggle aria-label="Abrir menu">Menu</button>
+
+    <div class="layout">
+      <aside class="sidebar" data-sidebar>
+        <div class="sidebar-head">
+          <h1>Plataforma PMAL</h1>
+          <p>Mapa pessoal de estudos</p>
+        </div>
+
+        <div class="sidebar-tools">
+          <input
+            class="search"
+            type="search"
+            data-search-subject
+            placeholder="Buscar matéria..."
+            aria-label="Buscar matéria"
+          />
+        </div>
+
+        <p class="count" data-count>Matérias</p>
+
+        <nav class="nav-list" aria-label="Lista de matérias">
+          <a class="subject-link" data-subject-link href="lingua-portuguesa/index.html">
+            <strong>Língua Portuguesa</strong>
+            <span>Interpretação, sintaxe, concordância e pontuação</span>
+          </a>
+          <a class="subject-link" data-subject-link href="matematica-raciocinio-logico/index.html">
+            <strong>Matemática / Raciocínio Lógico</strong>
+            <span>Aritmética, porcentagem e lógica</span>
+          </a>
+          <a class="subject-link" data-subject-link href="nocoes-informatica/index.html">
+            <strong>Noções de Informática</strong>
+            <span>Sistemas, internet e segurança</span>
+          </a>
+          <a class="subject-link" data-subject-link href="historia/index.html">
+            <strong>História (Geral e de Alagoas)</strong>
+            <span>História geral, Brasil e Alagoas</span>
+          </a>
+          <a class="subject-link" data-subject-link href="geografia/index.html">
+            <strong>Geografia (Geral e de Alagoas)</strong>
+            <span>Território, clima e espaço alagoano</span>
+          </a>
+          <a class="subject-link" data-subject-link href="direito-constitucional/index.html">
+            <strong>Direito Constitucional</strong>
+            <span>Princípios, direitos, Estado e poderes</span>
+          </a>
+          <a class="subject-link" data-subject-link href="direito-administrativo/index.html">
+            <strong>Direito Administrativo</strong>
+            <span>Administração, atos, licitações e servidores</span>
+          </a>
+          <a class="subject-link" data-subject-link href="direito-penal-processual-penal/index.html">
+            <strong>Direito Penal / Processual Penal</strong>
+            <span>Lei penal, crimes, inquérito e prisão</span>
+          </a>
+          <a class="subject-link" data-subject-link href="legislacao-especifica/index.html">
+            <strong>Legislação Específica</strong>
+            <span>Estatuto PMAL e Código de Ética</span>
+          </a>
+          <a class="subject-link" data-subject-link href="direitos-humanos/index.html">
+            <strong>Direitos Humanos</strong>
+            <span>Declaração Universal e pactos</span>
+          </a>
+        </nav>
+
+        <div style="padding: 1.25rem; border-top: 1px solid var(--line); margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+          <a href="redacao-cesp/index.html" style="display: block; padding: 0.75rem 1rem; background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, #b91c1c, #991b1b)'" onmouseout="this.style.background='linear-gradient(135deg, #dc2626, #b91c1c)'">
+            <i class="fas fa-feather" style="margin-right: 0.5rem;"></i>
+            Redação CESP
+          </a>
+          <a href="filtro-de-questoes/index.html" style="display: block; padding: 0.75rem 1rem; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, #2563eb, #1d4ed8)'" onmouseout="this.style.background='linear-gradient(135deg, #3b82f6, #2563eb)'">
+            <i class="fas fa-filter" style="margin-right: 0.5rem;"></i>
+            Filtro de Questões
+          </a>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="hero">
+          <span class="badge">Dashboard</span>
+          <h2>Estudo orientado por matéria</h2>
+          <p>
+            Escolha uma matéria no menu lateral para abrir sua área de estudo.
+            A página de Língua Portuguesa já foi reformulada no estilo Mapa +
+            Questões práticas, inspirado no layout que você enviou.
+          </p>
+        </section>
+
+        <section class="grid" aria-label="Destaques">
+          <article class="tile">
+            <h3>Modo Mapa</h3>
+            <p>Visualização em blocos para revisar tópicos-chave rapidamente.</p>
+          </article>
+          <article class="tile">
+            <h3>Modo Questões</h3>
+            <p>Treino objetivo por matéria para fixação e revisão ativa.</p>
+          </article>
+          <article class="tile">
+            <h3>Navegação simples</h3>
+            <p>Busca de matérias na lateral e acesso direto por pasta.</p>
+          </article>
+          <article class="tile" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white;">
+            <h3 style="color: white;">Redação CESP</h3>
+            <p>Aprenda técnicas, esqueletos estruturais e regras específicas para a redação CESP com 90-95% focado em conteúdo.</p>
+            <a href="redacao-cesp/index.html" style="display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); color: white; border-radius: 0.375rem; text-decoration: none; font-weight: 500; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+              Aprender →
+            </a>
+          </article>
+          <article class="tile" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+            <h3 style="color: white;">Filtro de Questões</h3>
+            <p>Acesso direto aos filtros de questões do QConcursos organizados por matéria.</p>
+            <a href="filtro-de-questoes/index.html" style="display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); color: white; border-radius: 0.375rem; text-decoration: none; font-weight: 500; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+              Ver Filtros →
+            </a>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+  </body>
+</html>

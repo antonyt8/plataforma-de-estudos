@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Língua Portuguesa - Mapas & Questões</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+    <script src="../assets/js/study-map-app.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-indigo-600 text-white p-4 rounded-full shadow-xl hover:bg-indigo-700 transition-colors">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-brain text-indigo-300"></i>
+                    Língua Portuguesa
+                </h1>
+                <p class="text-xs text-indigo-200 mt-1 font-medium">Mapas & Questões</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-indigo-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar assunto..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2" id="materiasCount">
+                Matérias Mapeadas
+            </h2>
+            <nav id="subjectList" class="space-y-1.5 pb-20 md:pb-0">
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm justify-between shrink-0">
+            <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 w-1/3">
+                <i class="fa-solid fa-table-columns"></i>
+                <span id="headerTitle" class="truncate font-medium"></span>
+            </div>
+
+            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center shrink-0">
+                <button id="tabMap" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Mapa Mental</span>
+                    <span class="sm:hidden">Teoria</span>
+                </button>
+                <button id="tabQuiz" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span class="hidden sm:inline">Questões Práticas</span>
+                    <span class="sm:hidden">Questões</span>
+                </button>
+            </div>
+
+            <div class="w-1/3 hidden md:block"></div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="mapContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+            </div>
+
+            <div id="quizContainer" class="hidden h-full fade-in pb-20">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mindMapData = [
+            {
+                id: 'período', title: 'O Período', color: 'bg-blue-500',
+                nodes: [
+                    { title: 'Período Simples', content: 'Possui apenas uma oração (oração absoluta), ou seja, um unico verbo/nucleo verbal.', examples: ['Estudei hoje.', 'Os alunos chegaram cedo.'] },
+                    { title: 'Período Composto', content: 'Possui duas ou mais orações (mais de um nucleo verbal).', examples: ['Acordei cedo e estudei muito.', 'Quando cheguei, a aula ja havia comecado.'], children: [
+                        { title: 'Por Coordenacao', content: 'Orações independentes entre si (não exercem função sintática umas nas outras).' },
+                        { title: 'Por Subordinacao', content: 'Ha dependencia sintática entre principal e subordinada.' },
+                        { title: 'Misto', content: 'Pode haver coordenacao e subordinacao no mesmo período.' }
+                    ]}
+                ]
+            },
+            {
+                id: 'oracoes_coordenadas', title: 'Orações Coordenadas', color: 'bg-emerald-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Sao orações sintaticamente independentes. Podem aparecer sem conectivo (assindeticas) ou com conectivo (sindeticas).', examples: ['Cheguei, vi, venci. (assindeticas)', 'Estudei muito e passei. (sindeticas)'] },
+                    { title: 'Classificação', children: [
+                        { title: 'Aditivas', content: 'Ideia de soma/adicao.', keywords: ['e', 'nem', 'não só... mas também'] },
+                        { title: 'Adversativas', content: 'Ideia de oposicao/contraste.', keywords: ['mas', 'porem', 'contudo', 'entretanto', 'todavia'] },
+                        { title: 'Alternativas', content: 'Ideia de alternancia/escolha.', keywords: ['ou', 'ora...ora', 'quer...quer', 'ja...ja'] },
+                        { title: 'Conclusivas', content: 'Ideia de conclusao do que foi dito antes.', keywords: ['portanto', 'por isso', 'logo', 'assim', 'pois (posposto)'] },
+                        { title: 'Explicativas', content: 'Ideia de justificativa/explicacao.', keywords: ['porque', 'que', 'pois (anteposto)', 'ja que'] }
+                    ]},
+                    { title: 'Dica Forte de Prova', content: 'POIS depois do verbo (entre virgulas) tende a ser conclusiva. POIS antes do verbo tende a ser explicativa.', examples: ['Ele estudou muito; passara, pois, no concurso. (conclusiva)', 'Estude, pois a prova esta perto. (explicativa)'] },
+                    { title: 'Pontuacao em Coordenadas', content: 'A virgula costuma separar orações coordenadas, especialmente quando ha mudanca de sujeito ou conectivo deslocado.' }
+                ]
+            },
+            {
+                id: 'oracoes_subordinadas_adverbiais', title: 'Orações Subord. Adverbiais', color: 'bg-purple-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Exercem função de adjunto adverbial da oração principal, exprimindo circunstancia.' },
+                    { title: 'Circunstancias', children: [
+                        { title: 'Causais', content: 'Indicam motivo/causa.', keywords: ['pois', 'porque', 'ja que', 'visto que'], examples: ['Faltou porque estava doente.'] },
+                        { title: 'Comparativas', content: 'Estabelecem comparacao.', keywords: ['mais do que', 'como (=igual a)', 'tal qual'], examples: ['Estuda como o irmao estudava.'] },
+                        { title: 'Concessivas', content: 'Indicam oposicao que não impede o fato principal.', keywords: ['ainda que', 'mesmo que', 'embora', 'conquanto'], examples: ['Embora cansado, continuou.'] },
+                        { title: 'Condicionais', content: 'Expressam condicao para ocorrencia da principal.', keywords: ['se', 'caso', 'desde que', 'contanto que'], examples: ['Se estudar, passara.'] },
+                        { title: 'Consecutivas', content: 'Indicam consequencia.', keywords: ['tao que', 'tal que', 'de modo que'], examples: ['Estudou tanto que passou.'] },
+                        { title: 'Temporais', content: 'Indicam tempo/momento.', keywords: ['quando', 'enquanto', 'logo que', 'mal'], examples: ['Quando cheguei, ele saiu.'] },
+                        { title: 'Finais', content: 'Indicam finalidade/objetivo.', keywords: ['para que', 'a fim de que'], examples: ['Estudou para que fosse aprovado.'] },
+                        { title: 'Proporcionais', content: 'Indicam variacao proporcional.', keywords: ['a medida que', 'a proporcao que', 'ao passo que'], examples: ['A medida que estudava, ganhava confianca.'] }
+                    ]},
+                    { title: 'Dica de Prova', content: 'Conectivo semelhante pode mudar classe pelo contexto. Analise o sentido da relação, não só a palavra.' }
+                ]
+            },
+            {
+                id: 'oracoes_subordinadas_substantivas', title: 'Orações Subord. Substantivas', color: 'bg-fuchsia-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Funcionam como substantivo na oração principal. Normalmente introduzidas por conjunção integrante QUE ou SE.' },
+                    { title: 'Macete do ISSO', content: 'Substitua a oração subordinada por ISSO. Se a estrutura continuar correta, e substantiva.', examples: ['Vi que vocês chegaram. -> Vi ISSO.'] },
+                    { title: 'Classificação Sintática', children: [
+                        { title: 'Subjetiva', content: 'Funciona como sujeito da principal.', examples: ['E necessario que todos estudem.'] },
+                        { title: 'Objetiva Direta', content: 'Funciona como objeto direto.', examples: ['Desejo que você passe.'] },
+                        { title: 'Objetiva Indireta', content: 'Funciona como objeto indireto.', examples: ['Preciso de que você me escute.'] },
+                        { title: 'Completiva Nominal', content: 'Completa nome (substantivo/adjetivo/adverbio).', examples: ['Tenho certeza de que ele vira.'] },
+                        { title: 'Predicativa', content: 'Funciona como predicativo do sujeito.', examples: ['A verdade e que faltou estudo.'] },
+                        { title: 'Apositiva', content: 'Explica termo anterior (geralmente após dois-pontos).', examples: ['Só desejo uma coisa: que vocês passem.'] }
+                    ]}
+                ]
+            },
+            {
+                id: 'oracoes_adjetivas', title: 'Orações Subord. Adjetivas', color: 'bg-pink-600',
+                nodes: [
+                    { title: 'Conceito', content: 'Introduzidas por pronome relativo e exercem função de adjetivo, caracterizando um antecedente.' },
+                    { title: 'Restritivas', content: 'NÃO possuem virgula. Restringem o sentido (uma parte).', examples: ['Ex: O politico que desvia deve ser preso. (Só os que desviam)'] },
+                    { title: 'Explicativas', content: 'SEMPRE com virgula. Explicam ou generalizam (o todo).', examples: ['Ex: O politico, que desvia, deve ser preso. (Todos desviam)'] },
+                    { title: 'Pronomes relativos mais cobrados', keywords: ['que', 'o qual', 'cujo', 'quem', 'onde'] },
+                    { title: 'Ponto Sensivel', content: 'Troca de restritiva por explicativa altera sentido e pode mudar o julgamento da afirmação em prova.' }
+                ]
+            },
+            {
+                id: 'complementos_verbais', title: 'Complementos Verbais', color: 'bg-indigo-600',
+                nodes: [
+                    { title: 'Objeto Direto (OD)', content: 'Complementa VTD. Sem preposição.', keywords: ['O que?', 'Quem?'] },
+                    { title: 'Objeto Indireto (OI)', content: 'Complementa VTI. Com preposição.', keywords: ['A que?', 'De quem?'] },
+                    { title: 'Verbo Transitivo Direto e Indireto (VTDI)', content: 'Exige simultaneamente OD e OI.', examples: ['Entreguei o documento ao fiscal.'] },
+                    { title: 'Questao Classica', content: 'Alguns verbos mudam transitividade e sentido conforme o contexto.', examples: ['Aspirar o perfume (VTD)', 'Aspirar ao cargo (VTI)'] }
+                ]
+            },
+            {
+                id: 'sujeito', title: 'Sujeito (Completo)', color: 'bg-purple-700',
+                nodes: [
+                    { title: 'Conceito', content: 'E o termo sobre o qual se faz uma declaracao e com o qual o verbo concorda. Para localizar: pergunte "Quem + verbo?" ou "O que + verbo?".', examples: ['Os alunos entenderam a matéria. (Quem entendeu? Os alunos)', 'O caderno esta rasgado. (O que esta rasgado? O caderno)', 'Os filhos ama a mae. (Quem ama? A mae)'] },
+                    { title: 'Atencao de Prova', content: 'O sujeito pode aparecer no inicio, no meio ou no fim da oração. Todo sujeito tem nucleo (substantivo ou termo equivalente). O nucleo não pode ser preposicionado.', examples: ['Os elevadores do predio estao desligados. Nucleo: elevadores (não "predio").'] },
+                    { title: 'Classificacoes do Sujeito', children: [
+                        { title: 'Sujeito Simples', content: 'Possui apenas um nucleo.', examples: ['O gabarito foi publicado. (nucleo: gabarito)', 'Muitos candidatos não estao preparados. (nucleo: candidatos)', 'Ele acordou cedo. (nucleo: ele)'] },
+                        { title: 'Sujeito Composto', content: 'Possui mais de um nucleo.', examples: ['Pai e filha foram ao teatro. (nucleos: pai, filha)', 'Compraram uma casa o marido e a esposa. (nucleos: marido, esposa)'] },
+                        { title: 'Sujeito Oculto', content: 'Não expresso, mas identificavel pela desinencia verbal. Também chamado desinencial, implicito, eliptico ou subentendido.', examples: ['Acordamos cedo. (nos)', 'Acredito em milagres. (eu)'] },
+                        { title: 'Sujeito Indeterminado', content: 'Existe, mas não pode ser identificado.', children: [
+                            { title: 'Regra 1: Verbo na 3a pessoa do plural', content: 'Sem referencia a sujeito expresso no contexto.', examples: ['Anunciaram a morte do prefeito. (alguem)'] },
+                            { title: 'Regra 2: Pronome Indeterminador do Sujeito (SE)', content: 'Com VTI, VI ou VL; verbo no singular.', examples: ['Precisa-se de funcionarios.'] },
+                            { title: 'Cuidado com o Contexto', content: 'Nem todo verbo na 3a pessoa do plural tem sujeito indeterminado.', examples: ['A primeira-dama e o secretario conversaram e anunciaram a morte do prefeito. (na 2a oração, sujeito oculto: eles)'] }
+                        ]}
+                    ]},
+                    { title: 'Oração sem Sujeito (Sujeito Inexistente)', content: 'Ocorre com verbos impessoais.', children: [
+                        { title: 'Verbo HAVER', content: 'No sentido de existir ou tempo decorrido, não tem sujeito.', examples: ['Ha vagas para vendedores.', 'Havera recurso.', 'Ha dias não chove.'] },
+                        { title: 'Verbo FAZER', content: 'No sentido de tempo/clima, não tem sujeito.', examples: ['Faz muito calor no Rio.', 'Ontem fez muito calor.'] },
+                        { title: 'Fenomenos da Natureza', content: 'Quando usados literalmente, os verbos sao impessoais.', examples: ['Choveu intensamente.', 'Nevou naquela cidade.'] },
+                        { title: 'Verbo SER impessoal', content: 'Em expressoes de tempo/clima.', examples: ['Ainda e cedo.'] }
+                    ]},
+                    { title: 'Fixacao Rapida (Resumo)', content: 'Padrao recorrente em prova: diferenciar sujeito simples, composto, oculto, indeterminado e inexistente.', children: [
+                        { title: 'Exemplo 1', content: 'Temos vagas para vendedores = sujeito oculto (nos). Existem vagas = sujeito simples (vagas). Ha vagas = sujeito inexistente.' },
+                        { title: 'Exemplo 2', content: 'Vive-se bem em apartamentos = sujeito indeterminado (SE indeterminador).' },
+                        { title: 'Exemplo 3', content: 'A maioria dos alunos chegou atrasada = sujeito simples (nucleo: maioria).' },
+                        { title: 'Exemplo 4', content: 'Choveram reclamacoes = sujeito simples (reclamacoes), pois uso figurado.' }
+                    ]},
+                    { title: 'Gabarito-Guia (Pontos-Chave)', keywords: [
+                        'Haver=existir -> oração sem sujeito',
+                        'Fazer (tempo/clima) -> oração sem sujeito',
+                        '3a plural sem referencia -> sujeito indeterminado',
+                        'SE com VTI/VI/VL -> sujeito indeterminado',
+                        'SE com VTD/VTDI -> particula apassivadora'
+                    ] }
+                ]
+            },
+            {
+                id: 'adj_adnominal_vs_comp_nominal', title: 'Adjunto Adnominal x CN', color: 'bg-violet-600',
+                nodes: [
+                    { title: 'Adjunto Adnominal', content: 'Termo acessorio que determina ou caracteriza substantivo (artigo, pronome, numeral, adjetivo, locucao adjetiva).' },
+                    { title: 'Complemento Nominal (CN)', content: 'Completa sentido de nome (substantivo abstrato, adjetivo ou adverbio). E sempre preposicionado e geralmente paciente/alvo.' },
+                    { title: 'A Grande Diferenca', content: 'Agente da acao / posse = Adjunto Adnominal. Paciente/alvo = Complemento Nominal.', examples: ['A resposta DO aluno (agente)', 'A resposta AO aluno (alvo)'] },
+                    { title: 'Macete', content: 'Se o termo preposicionado liga-se a substantivo abstrato e sofre a acao, tende a ser CN.' }
+                ]
+            },
+            {
+                id: 'substantivo', title: 'Substantivo', color: 'bg-emerald-600',
+                nodes: [
+                    { title: 'Conceito', content: 'Palavra que nomeia seres, coisas, estados, qualidades, acoes e sentimentos. Pode ser nuclear no sujeito e em varias funções nominais.', examples: ['O cantar da menina emocionou a turma.'] },
+                    { title: 'Classificação Geral', children: [
+                        { title: 'Comum x Proprio', content: 'Comum nomeia a especie; proprio individualiza um ser.', examples: ['cidade / Maceio'] },
+                        { title: 'Concreto x Abstrato', content: 'Concreto tem existencia independente; abstrato depende de outro para se manifestar.', examples: ['mesa (concreto)', 'beleza, amor, corrida (abstratos)'] },
+                        { title: 'Primitivo x Derivado', content: 'Primitivo não se origina de outra palavra da língua; derivado surge por derivacao.', examples: ['pedra -> pedreiro'] },
+                        { title: 'Simples x Composto', content: 'Simples: um radical. Composto: mais de um radical.', examples: ['flor / couve-flor'] },
+                        { title: 'Coletivo', content: 'No singular, designa conjunto de seres da mesma especie.', examples: ['alcateia, cardume, enxame'] }
+                    ]},
+                    { title: 'Flexao de Genero', children: [
+                        { title: 'Biformes e Uniformes', content: 'Biformes variam em masc/fem; uniformes mantem forma unica (comum de dois, sobrecomum, epiceno).' },
+                        { title: 'Atencao Semantica', content: 'Mudanca de genero pode alterar sentido.', examples: ['o radio (aparelho) / a radio (emissora)'] }
+                    ]},
+                    { title: 'Flexao de Numero', children: [
+                        { title: 'Regra Basica', content: 'Acrescenta-se -s, com adaptacoes foneticas conforme a terminacao.' },
+                        { title: 'Compostos - ambos variam', content: 'Subst+Subst, Subst+Adj, Num+Subst.', examples: ['tenentes-coroneis', 'segundas-feiras'] },
+                        { title: 'Compostos - varia o 1o', content: 'Quando o 2o termo limita/finaliza o 1o.', examples: ['salarios-familia'] },
+                        { title: 'Compostos invariaveis', content: 'Verbo+adv, verbos opostos e algumas estruturas lexicalizadas.', examples: ['os perde-ganha'] }
+                    ]},
+                    { title: 'Substantivacao', content: 'Qualquer classe pode virar substantivo com determinante.', examples: ['O belo encanta.', 'O cantar e terapeutico.'] }
+                ]
+            },
+            {
+                id: 'artigo_numeral', title: 'Artigo e Numeral', color: 'bg-cyan-600',
+                nodes: [
+                    { title: 'Artigo', content: 'Classe variavel que antecede o substantivo e define (ou indefinie) seu grau de determinacao. Concorda em genero e numero.' , children: [
+                        { title: 'Definidos', keywords: ['o', 'a', 'os', 'as'] },
+                        { title: 'Indefinidos', keywords: ['um', 'uma', 'uns', 'umas'] },
+                        { title: 'Valor Semantico', content: 'Pode indicar generalizacao, especificacao ou enfase.', examples: ['O homem e mortal. (generico)'] }
+                    ]},
+                    { title: 'Numeral', children: [
+                        { title: 'Cardinais', content: 'Indicam quantidade exata.', examples: ['dois candidatos'] },
+                        { title: 'Ordinais', content: 'Indicam ordem/posicao.', examples: ['primeiro colocado'] },
+                        { title: 'Fracionarios', content: 'Indicam divisao em partes.', examples: ['meio, terco, decimo'] },
+                        { title: 'Multiplicativos', content: 'Indicam multiplicacao.', examples: ['dobro, triplo'] },
+                        { title: 'Coletivos', content: 'Indicam conjunto numerico exato.', examples: ['duzia, centena, milhar'] }
+                    ]},
+                    { title: 'Emprego em Textos Oficiais', content: 'Em artigos de lei: ordinal até nono e cardinal a partir de dez.', examples: ['Art. 9o / Art. 10'] }
+                ]
+            },
+            {
+                id: 'pronomes', title: 'Pronomes (Completo)', color: 'bg-fuchsia-600',
+                nodes: [
+                    { title: 'Pronomes Pessoais', children: [
+                        { title: 'Retos', content: 'Atuam, em regra, como sujeito.', keywords: ['eu', 'tu', 'ele', 'nos', 'vos', 'eles'] },
+                        { title: 'Obliquos Atomos', content: 'Sem preposição; em geral, complemento verbal.', keywords: ['me', 'te', 'se', 'o', 'a', 'lhe', 'nos', 'vos', 'os', 'as', 'lhes'] },
+                        { title: 'Obliquos Tonicos', content: 'Com preposição.', keywords: ['mim', 'ti', 'ele', 'ela', 'nos', 'vos', 'eles', 'elas', 'comigo', 'contigo'] },
+                        { title: 'Dica', content: 'Entre preposição e verbo no infinitivo, use pronome reto.', examples: ['Para eu estudar, preciso de silencio.'] }
+                    ]},
+                    { title: 'Pronomes Possessivos', content: 'Indicam posse e concordam com a coisa possuida.', keywords: ['meu', 'teu', 'seu', 'nosso', 'vosso'] },
+                    { title: 'Pronomes Indefinidos', content: 'Referencia vaga ou quantidade imprecisa.', keywords: ['alguem', 'ninguem', 'tudo', 'nada', 'cada', 'qualquer'] },
+                    { title: 'Pronomes Interrogativos', content: 'Introduzem interrogacoes diretas/indiretas.', keywords: ['que', 'quem', 'qual', 'quanto'] },
+                    { title: 'Pronomes Demonstrativos', children: [
+                        { title: 'Este(s), Esta(s), Isto', content: 'Presente; perto de quem fala; antecipa informacao (catafora).' },
+                        { title: 'Esse(s), Essa(s), Isso', content: 'Passado/futuro proximo; retoma termo anterior (anafora).' }
+                    ]},
+                    { title: 'Pronomes Relativos', children: [
+                        { title: 'Que / O qual', content: 'Retomam antecedente e iniciam oração adjetiva.' },
+                        { title: 'Cujo(s)', content: 'Indica posse (nunca usar artigo depois dele!).' },
+                        { title: 'Onde', content: 'Apenas para lugar fisico; para ideias, prefira em que/no qual.' },
+                        { title: 'Quanto', content: 'Usado com antecedente tudo/todos/todas.' }
+                    ]},
+                    { title: 'Pronomes de Tratamento', content: 'Emprego formal e concordancia na 3a pessoa.', keywords: ['Vossa Excelencia', 'Vossa Senhoria', 'Você'] }
+                ]
+            },
+            {
+                id: 'verbos', title: 'Verbos (Estrutura e Modos)', color: 'bg-rose-600',
+                nodes: [
+                    { title: 'Estrutura Basica', children: [
+                        { title: 'Radical (RD)', content: 'Parte que contem o significado.' },
+                        { title: 'Vogal Tematica (VT)', content: 'Indica a conjugacao (1: -ar, 2: -er, 3: -ir).' },
+                        { title: 'Desinencias', content: 'Indicam o Modo/Tempo e Numero/Pessoa.' }
+                    ]},
+                    { title: 'Formas Nominais', children: [
+                        { title: 'Infinitivo', content: 'Forma não flexionada de referencia do verbo.' },
+                        { title: 'Gerundio', content: 'Indica processo em curso.', examples: ['estudando'] },
+                        { title: 'Participio', content: 'Pode compor tempos compostos e voz passiva.', examples: ['estudado'] }
+                    ]},
+                    { title: 'Modos Verbais', children: [
+                        { title: 'Indicativo', content: 'Exprime certeza, facto real.' },
+                        { title: 'Subjuntivo', content: 'Exprime dúvida, hipotese, desejo.' },
+                        { title: 'Imperativo', content: 'Exprime ordem, pedido, conselho.' }
+                    ]},
+                    { title: 'Predicacao Verbal', children: [
+                        { title: 'VI', content: 'Verbo intransitivo: sentido completo.' },
+                        { title: 'VTD', content: 'Exige objeto direto.' },
+                        { title: 'VTI', content: 'Exige objeto indireto.' },
+                        { title: 'VTDI', content: 'Exige OD e OI.' },
+                        { title: 'VL', content: 'Verbo de ligacao + predicativo.' }
+                    ]},
+                    { title: 'Dica de Prova', content: 'Transitividade pode mudar conforme o contexto.', examples: ['Assistir ao filme (VTI)', 'Assistir o paciente (VTD = prestar assistencia)'] }
+                ]
+            },
+            {
+                id: 'adjetivo', title: 'Adjetivos', color: 'bg-amber-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Qualifica o substantivo.', children: [
+                        { title: 'Subjetivos', content: 'Dependem de juizo de valor.', examples: ['Irmas bonitas.'] },
+                        { title: 'Objetivos', content: 'Não dependem de opiniao.', examples: ['Irmas gemeas.'] }
+                    ]},
+                    { title: 'Locucao Adjetiva', content: 'Expressao preposicionada com valor de adjetivo.', examples: ['amor de mae = amor materno'] },
+                    { title: 'Grau', children: [
+                        { title: 'Comparativo', content: 'Superioridade, inferioridade e igualdade.', examples: ['mais alto que', 'tao alto quanto'] },
+                        { title: 'Superlativo', content: 'Absoluto (sintetico/analitico) e relativo.', examples: ['belissimo', 'muito belo', 'o mais belo da turma'] }
+                    ]}
+                ]
+            },
+            {
+                id: 'adverbio_interjeicao', title: 'Adverbio e Interjeição', color: 'bg-teal-500',
+                nodes: [
+                    { title: 'Adverbio (Invariavel)', content: 'Modifica o verbo, adjetivo ou adverbio.', children: [
+                        { title: 'Circunstancias', keywords: ['Tempo (cedo)', 'Modo (bem)', 'Negação (não)', 'Intensidade (muito)', 'Lugar (aqui)', 'Dúvida (talvez)', 'Afirmação (sim)'] },
+                        { title: 'Locucao Adverbial', content: 'Conjunto de palavras com valor de adverbio.', examples: ['de repente', 'a noite', 'com cuidado'] }
+                    ]},
+                    { title: 'Interjeição', content: 'Palavra invariavel que exprime emocao, apelo ou estado de espirito.', examples: ['Ah!', 'Coragem!', 'Ui!', 'Ue!', 'Nossa!'] }
+                ]
+            },
+            {
+                id: 'preposição', title: 'Preposição', color: 'bg-indigo-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Palavra invariavel que liga termos.', keywords: ['a', 'ante', 'após', 'até', 'com', 'contra', 'de', 'em', 'para', 'por', 'sem', 'sob'] },
+                    { title: 'Valor Semantico', children: [
+                        { title: 'Relacional', content: 'Exigida pelo verbo/nome (sem valor proprio).' },
+                        { title: 'Nocional', content: 'Introduz adjuntos (com sentido proprio).', examples: ['Morreu DE fome (Causa).'] }
+                    ]},
+                    { title: 'Combinacoes e Contracoes', content: 'Formas como do, na, pelo, desta resultam de preposição + artigo/pronome.' },
+                    { title: 'Regencia', content: 'A escolha da preposição depende do termo regente (verbo ou nome).', examples: ['assistir a', 'gostar de', 'obedecer a'] }
+                ]
+            },
+            {
+                id: 'concordancia_nominal', title: 'Concordancia Nominal', color: 'bg-lime-600',
+                nodes: [
+                    { title: 'Regra Geral', content: 'Determinantes e adjetivos concordam em genero e numero com o substantivo a que se referem.' },
+                    { title: 'Casos Especiais', children: [
+                        { title: 'SÓ', content: 'Só = Somente (invariavel). Só = Sozinho (variavel, "sós").' },
+                        { title: 'E proibido / E necessario', content: 'Sem artigo = invariavel. Com artigo = variavel.' },
+                        { title: 'Possivel', content: 'Concorda com o artigo que antecede o termo intensificador.', examples: ['As mais belas possiveis.'] },
+                        { title: 'Anexo / Incluso / Obrigado', content: 'Variam conforme o termo a que se referem.', examples: ['Seguem anexas as planilhas.'] },
+                        { title: 'Meio / Bastante', content: 'Podem variar ou não, conforme função (adjetivo x adverbio).', examples: ['Ela esta meio cansada. / Tomou meia garrafa.'] },
+                        { title: 'Menos / Alerta', content: 'Em regra, invariaveis.' }
+                    ]},
+                    { title: 'Adjetivo posposto a dois substantivos', content: 'Pode concordar com o mais proximo ou ir ao plural (concordancia atrativa x logica).', examples: ['amor e fe perfeitos / perfeita'] }
+                ]
+            },
+            {
+                id: 'vozes_verbais', title: 'Vozes Verbais', color: 'bg-rose-500',
+                nodes: [
+                    { title: 'Voz Ativa', content: 'O sujeito e o agente.', examples: ['O aluno resolveu a prova.'] },
+                    { title: 'Voz Passiva', content: 'O sujeito e o paciente.', children: [
+                        { title: 'Analitica', content: 'Verbo SER + Participio.' },
+                        { title: 'Sintetica', content: 'Verbo + "se".' }
+                    ]},
+                    { title: 'Agente da Passiva', content: 'Pratica a acao na voz passiva (precedido de por, pelo, de).' },
+                    { title: 'Transformacao Ativa <-> Passiva', content: 'OD da ativa vira sujeito paciente na passiva; sujeito agente da ativa vira agente da passiva.', examples: ['A banca corrigiu as provas -> As provas foram corrigidas pela banca.'] }
+                ]
+            },
+            {
+                id: 'funcoes_se', title: 'Funções do "SE"', color: 'bg-orange-500',
+                nodes: [
+                    { title: 'Particula Apassivadora (PA)', content: 'Com VTD ou VTDI. O verbo CONCORDA com o sujeito.', examples: ['Vende-se casa.', 'Vendem-se casas.'] },
+                    { title: 'Pronome Indeterminador (PIS)', content: 'Com VTI, VI e VL. Verbo SEMPRE no singular.', examples: ['Necessita-se de colaboracao.'] },
+                    { title: 'Pronome Reflexivo/Reciproco', content: 'Quando o sujeito pratica e recebe a acao.', examples: ['Ela se machucou.', 'Os irmaos se abracaram.'] },
+                    { title: 'Conjunção Integrante', content: 'Introduz oração substantiva.', examples: ['Não sei se ele vira.'] },
+                    { title: 'Particula Expletiva', content: 'Elemento de realce, sem função sintática essencial.', examples: ['Foi-se embora cedo.'] }
+                ]
+            },
+            {
+                id: 'colocacao_pronominal', title: 'Colocacao Pronominal', color: 'bg-cyan-500',
+                nodes: [
+                    { title: 'Proclise', content: 'Pronome ANTES do verbo. Ocorre com palavras atrativas.', examples: ['Não me fale isso.', 'Quem te contou?'] },
+                    { title: 'Mesoclise', content: 'Pronome no MEIO do verbo (futuro do presente/futuro do preterito), sem atrativo.', examples: ['Falar-te-ei.', 'Dir-me-ia a verdade.'] },
+                    { title: 'Enclise', content: 'Pronome DEPOIS do verbo, comum no inicio de frase e após infinitivo/imperativo afirmativo.', examples: ['Entregaram-me o edital.', 'Faca-o agora.'] },
+                    { title: 'Palavras Atrativas (proclise)', keywords: ['não', 'nunca', 'jamais', 'que', 'quem', 'quando', 'se', 'talvez', 'todos os indefinidos'] }
+                ]
+            },
+            {
+                id: 'crase', title: 'Crase', color: 'bg-red-500',
+                nodes: [
+                    { title: 'Conceito', content: 'Fusao da preposição "a" com o artigo "a".' },
+                    { title: 'Quando Ocorre', children: [
+                        { title: 'Regra Basica', content: 'Termo regente exige preposição A + termo feminino admite artigo A.' },
+                        { title: 'Locucoes femininas', content: 'Locucoes adverbiais, prepositivas e conjuntivas femininas.', examples: ['a tarde', 'a medida que', 'a procura de'] },
+                        { title: 'Antes de "aquele(a/s)"', content: 'Quando houver preposição A exigida pelo regente.' }
+                    ]},
+                    { title: 'Não Ocorre', children: [
+                        { title: 'Antes de palavra masculina', content: 'Salvo casos especiais de locucao com palavra subentendida feminina.' },
+                        { title: 'Antes de verbo', content: 'Verbo não admite artigo.' },
+                        { title: 'Antes de pronomes em geral', content: 'Com excecoes previstas (ex.: aquele/aquela).', examples: ['Entreguei a ela.'] }
+                    ]},
+                    { title: 'Facultativa', content: 'Antes de possessivo feminino singular, nomes proprios femininos e após até.' },
+                    { title: 'Dica', content: 'Ocorre crase antes do "que" quando o "a" anterior for pronome demonstrativo (=aquela).', examples: ['Referi-me a que você comprou.'] }
+                ]
+            },
+            {
+                id: 'pontuacao', title: 'Pontuacao', color: 'bg-sky-500',
+                nodes: [
+                    { title: 'Virgula', content: 'Separa vocativo, aposto explicativo, adjunto adverbial deslocado, elementos coordenados e orações deslocadas.', examples: ['Joao, venha aqui.', 'Cansado, ele dormiu cedo.'] },
+                    { title: 'Não separar', content: 'Em regra, não separar sujeito de verbo, verbo de complemento e nome de complemento.' },
+                    { title: 'Virgula Vicaria', content: 'Substitui um termo ja expresso (ex: verbo omitido).', examples: ['Ela gosta de bolo; ele, de pao.'] },
+                    { title: 'Dois-Pontos', content: 'Indica citacao, aposto explicativo, explicacao ou enumeracao.' },
+                    { title: 'Ponto e Virgula', content: 'Separa itens de enumeração complexa e periodos coordenados extensos.' },
+                    { title: 'Travessao e Parenteses', content: 'Marcam insercoes explicativas/comentarios incidentais.' }
+                ]
+            },
+            {
+                id: 'valores_do_que', title: 'Valores do "QUE"', color: 'bg-pink-500',
+                nodes: [
+                    { title: 'Morfologico: Pronome', content: 'Indefinido ou Interrogativo.' },
+                    { title: 'Morfologico: Preposição', content: 'Equivale a "de".' },
+                    { title: 'Sintático: Conj. Integrante', content: 'Introduz oração substantiva (=ISSO).' },
+                    { title: 'Sintático: Pronome Relativo', content: 'Retoma nome anterior (= o qual).' },
+                    { title: 'Particula Expletiva', content: 'Usado para enfase, sem função sintática relevante.', examples: ['Quase que cai.'] },
+                    { title: 'Conjunção Explicativa/Causal', content: 'Aparece em estruturas explicativas.', examples: ['Saia, que esta tarde.'] },
+                    { title: 'Estrutura de Analise', content: '1) Veja se retoma antecedente. 2) Tente ISSO. 3) Teste substituicao por O QUAL.' }
+                ]
+            },
+            {
+                id: 'coesao_coerencia', title: 'Coesao e Coerencia', color: 'bg-slate-700',
+                nodes: [
+                    { title: 'Coesao (Forma / Conexao)', children: [
+                        { title: 'Referencial', content: 'Evita repeticao por retomada e antecipacao (anafora e catafora).', examples: ['Joao chegou. Ele sentou.'] },
+                        { title: 'Sequencial', content: 'Organiza progressao textual com conectivos e marcadores.', keywords: ['além disso', 'portanto', 'contudo', 'assim', 'por fim'] },
+                        { title: 'Lexical', content: 'Uso de sinonimos, hiperonomos e repeticoes planejadas para manter o tema.' }
+                    ]},
+                    { title: 'Coerencia (Sentido / Logica)', content: 'Compatibilidade semantica e logica entre as partes do texto e o conhecimento de mundo.', children: [
+                        { title: 'Tipos de incoerencia', content: 'Contradicao interna, informacao impossivel, ambiguidade e quebra de paralelismo.' },
+                        { title: 'Leitura de Prova', content: 'Conectivo correto não salva texto incoerente; forma e sentido devem caminhar juntos.' }
+                    ]}
+                ]
+            },
+            {
+                id: 'tipologia_textual', title: 'Tipologia Textual', color: 'bg-amber-600',
+                nodes: [
+                    { title: 'Narracao', content: 'Relata acontecimentos em sequencia temporal, com enredo, personagens, tempo e espaco.', keywords: ['narrador', 'enredo', 'climax', 'desfecho'] },
+                    { title: 'Descricao', content: 'Apresenta caracteristicas de seres/ambientes, com foco em estados e detalhes.', keywords: ['adjetivacao', 'estado', 'detalhamento'] },
+                    { title: 'Dissertacao', children: [
+                        { title: 'Argumentativa', content: 'Defende tese com argumentos, dados e conclusao persuasiva.' },
+                        { title: 'Expositiva', content: 'Explica tema de forma objetiva, sem foco central em convencimento.' }
+                    ]},
+                    { title: 'Injuncao', content: 'Instrui ou orienta procedimentos; uso frequente de imperativo e infinitivo.', examples: ['Receitas, manuais, editais, instrucoes.'] },
+                    { title: 'Dica de Prova', content: 'Um genero textual pode misturar tipologias, mas sempre ha tipologia predominante.' }
+                ]
+            },
+            {
+                id: 'interpretacao_textual', title: 'Interpretação Textual', color: 'bg-blue-600',
+                nodes: [
+                    { title: 'Compreensao x Interpretação', children: [
+                        { title: 'Compreensao (Texto)', content: 'A resposta esta explicitamente no texto.', keywords: ['Segundo o texto'] },
+                        { title: 'Interpretação (Além do texto)', content: 'Deducoes e conclusoes a partir do texto.', keywords: ['Infere-se'] }
+                    ]},
+                    { title: 'Implicitos Textuais', children: [
+                        { title: 'Pressupostos', content: 'Possuem marcas linguisticas claras (adverbios, etc).', examples: ['Ex: Ele AINDA fuma. (Pressuposto: fumava antes)'] },
+                        { title: 'Subentendidos', content: 'Deducoes logicas pelo contexto, sem marca explicita.' }
+                    ]},
+                    { title: 'Facto x Hipotese', children: [
+                        { title: 'Facto', content: 'Acao incontestavel, exprime certeza.' },
+                        { title: 'Hipotese', content: 'Possibilidade. Geralmente marcada por verbos no subjuntivo ou futuro do preterito.' }
+                    ]},
+                    { title: 'Estrategias de Resolucao', children: [
+                        { title: 'Leia o comando antes', content: 'Identifique o que a banca quer: ideia central, inferencia, intencao do autor, efeito de sentido etc.' },
+                        { title: 'Volte ao trecho-chave', content: 'Toda alternativa correta deve ter ancoragem textual (direta ou inferencial).' },
+                        { title: 'Desconfie de absolutos', content: 'Termos como "sempre" e "nunca" costumam tornar alternativas erradas.' }
+                    ]}
+                ]
+            },
+            {
+                id: 'reescritura', title: 'Reescritura e Paralelismo', color: 'bg-violet-500',
+                nodes: [
+                    { title: 'Parafrase', content: 'Reescrita com outras palavras, preservando o sentido original (sem acrescimo indevido).' },
+                    { title: 'Paralelismo', children: [
+                        { title: 'Sintático', content: 'Manutencao da mesma estrutura gramatical.', examples: ['O que espero: viagens, praia e visitas...'] },
+                        { title: 'Semantico', content: 'Correspondencia logica de valores.' }
+                    ]},
+                    { title: 'Nominalizacao', content: 'Uso de substantivo para condensar acao verbal e promover coesao.', examples: ['analisar -> analise'] },
+                    { title: 'Transformacoes recorrentes', children: [
+                        { title: 'Voz ativa <-> passiva', content: 'Muda foco informacional mantendo nucleo de sentido.' },
+                        { title: 'Oração reduzida <-> desenvolvida', content: 'Alteracao estrutural sem perda semantica relevante.' },
+                        { title: 'Discurso direto <-> indireto', content: 'Ajusta pronomes, tempos e deiticos.' }
+                    ]},
+                    { title: 'Criterio de Correto/Errado', content: 'Reescrita correta preserva sentido, regencia, concordancia e pontuacao nuclear do período.' }
+                ]
+            },
+            {
+                id: 'roteiro_aulas', title: 'Roteiro (Aulas 27-43)', color: 'bg-stone-700',
+                nodes: [
+                    { title: 'Aula 27 - Substantivo', content: 'Foco em classificação, flexoes e substantivacao.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['abstrato x concreto', 'coletivos', 'plural de compostos', 'mudanca semantica de genero'] },
+                        { title: 'Checklist de Revisão', keywords: ['sei diferenciar comum/proprio', 'sei diferenciar abstrato/concreto', 'domino plural dos compostos', 'reconheco substantivacao'] }
+                    ]},
+                    { title: 'Aula 28 - Artigo e Numeral', content: 'Emprego semantico dos artigos e classificação dos numerais.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['generalizacao x especificacao', 'ordinal x cardinal em textos legais', 'coletivos numerais'] },
+                        { title: 'Checklist de Revisão', keywords: ['identifico artigo definido/indefinido', 'sei classes de numeral', 'sei regra de artigos de lei'] }
+                    ]},
+                    { title: 'Aulas 29 e 30 - Pronomes', content: 'Sistema pronominal completo, colocacao e valores semanticos.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['mim x eu', 'cujo sem artigo', 'onde x em que', 'pronomes de tratamento na 3a pessoa'] },
+                        { title: 'Checklist de Revisão', keywords: ['domino pessoais retos/obliquos', 'domino relativos', 'domino demonstrativos (anafora/catafora)', 'evito erros classicos de uso'] }
+                    ]},
+                    { title: 'Aula 32 - Classes e Funções', content: 'Reforco de classes gramaticais e funções sintaticas recorrentes.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['classe morfologica x função sintática', 'termo nucleado x acessorio'] },
+                        { title: 'Checklist de Revisão', keywords: ['não confundo classe com função', 'sei localizar nucleo do termo'] }
+                    ]},
+                    { title: 'Aula 33 - Verbos (Parte I)', content: 'Estrutura verbal, modos, tempos e predicacao.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['transitividade variavel', 'verbo de ligacao contextual', 'locucao verbal x tempo simples'] },
+                        { title: 'Checklist de Revisão', keywords: ['sei identificar RD/VT/desinencias', 'sei classificar VTD/VTI/VTDI/VI/VL', 'sei valor modal dos tempos'] }
+                    ]},
+                    { title: 'Aula 35 - Concordancia Nominal', content: 'Concordancia geral e casos especiais mais cobrados.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['anexo/incluso/obrigado', 'meio/bastante', 'e proibido/e necessario', 'menos/alerta invariaveis'] },
+                        { title: 'Checklist de Revisão', keywords: ['aplico regra geral', 'domino casos especiais', 'identifico concordancia atrativa/logica'] }
+                    ]},
+                    { title: 'Aula 38 - Coesao e Coerencia', content: 'Conexao formal e consistencia de sentido.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['texto coeso porem incoerente', 'referencia ambigua', 'conectivo inadequado'] },
+                        { title: 'Checklist de Revisão', keywords: ['reconheco anafora/catafora', 'reconheco progressao sequencial', 'avalio coerencia global'] }
+                    ]},
+                    { title: 'Aula 39 - Tipologia Textual', content: 'Identificacao da tipologia predominante em diferentes generos.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['genero x tipologia', 'mistura tipologica', 'predominancia textual'] },
+                        { title: 'Checklist de Revisão', keywords: ['diferencio narracao/descricao/dissertacao/injuncao', 'identifico marcas linguisticas de cada tipo'] }
+                    ]},
+                    { title: 'Aula 42 - Interpretação Textual', content: 'Compreensao literal, inferencia e implicitos.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['resposta fora do texto', 'inferencia sem base', 'alternativas absolutas (sempre/nunca)'] },
+                        { title: 'Checklist de Revisão', keywords: ['distingo compreensao de interpretação', 'sei localizar pressupostos/subentendidos', 'justifico resposta com trecho'] }
+                    ]},
+                    { title: 'Aula 43 - Reescritura', content: 'Parafrase, paralelismo e equivalencia de sentido.', children: [
+                        { title: 'Pegadinhas de Banca', keywords: ['troca de conectivo com mudanca de sentido', 'quebra de paralelismo', 'mudanca de foco semantico'] },
+                        { title: 'Checklist de Revisão', keywords: ['mantenho sentido nuclear', 'preservo regencia/concordancia', 'valido transformacoes estruturais'] }
+                    ]},
+                    { title: 'Plano de Revisão 7 Dias', children: [
+                        { title: 'Dias 1-2', content: 'Aulas 27, 28, 29/30 (morfologia).' },
+                        { title: 'Dias 3-4', content: 'Aulas 32, 33, 35 (sintaxe e concordancia).' },
+                        { title: 'Dias 5-6', content: 'Aulas 38, 39, 42 (texto).' },
+                        { title: 'Dia 7', content: 'Aula 43 + revisão geral + bateria de questões.' }
+                    ]}
+                ]
+            },
+            {
+                id: 'fonetica', title: 'Fonetica', color: 'bg-lime-600',
+                nodes: [
+                    { title: 'Encontro Vocalico', content: 'Combinacao de vogais/semivogais.', children: [
+                        { title: 'Ditongo', content: 'Vogal + semivogal (ou inverso) na mesma silaba.', examples: ['pai', 'serie'] },
+                        { title: 'Tritongo', content: 'Semivogal + vogal + semivogal na mesma silaba.', examples: ['Uruguai'] },
+                        { title: 'Hiato', content: 'Duas vogais em silabas diferentes.', examples: ['sa-ude', 'pa-is'] }
+                    ]},
+                    { title: 'Digrafo Vocalico', content: 'Duas letras com um só som de vogal (am, em...). O "m/n" apenas nasaliza.' },
+                    { title: 'Digrafos Consonantais', keywords: ['nh', 'lh', 'ch', 'rr', 'ss', 'qu', 'gu'] },
+                    { title: 'Encontro Consonantal', content: 'Duas consoantes onde ambas sao pronunciadas.', examples: ['prato', 'atlas'] },
+                    { title: 'Dica', content: 'Questao de fonetica costuma cobrar som (fonema), não quantidade de letras.' }
+                ]
+            }
+        ];
+
+        const questionsData = [
+            { id: 1, subjectId: 'oracoes_coordenadas', text: 'Na frase "Os alunos estudaram muito, passarao, pois, no concurso", a conjunção sublinhada tem valor:', options: ['Explicativo', 'Adversativo', 'Conclusivo', 'Alternativo', 'Aditivo'], correctAnswer: 2, explanation: 'Correto! A conjunção "pois" deslocada (após o verbo "passarao" e entre virgulas) tem valor CONCLUSIVO.' },
+            { id: 2, subjectId: 'oracoes_coordenadas', text: 'Assinale a alternativa que contem uma oração coordenada adversativa:', options: ['Não só estuda, mas também trabalha.', 'Queria ir a praia, mas choveu o dia todo.', 'Ou você estuda, ou você trabalha.', 'Estudou tanto que adormeceu.', 'Visto que choveu, não fomos a praia.'], correctAnswer: 1, explanation: 'A conjunção "mas" liga duas orações independentes indicando oposicao/contraste (queria ir a praia X choveu).' },
+            { id: 3, subjectId: 'funcoes_se', text: 'Em "Necessita-se de novos materiais para a aula", a palavra "se" classifica-se morfologicamente como:', options: ['Particula Apassivadora', 'Pronome Reflexivo', 'Pronome Indeterminador de Sujeito', 'Conjunção Integrante', 'Particula de Realce'], correctAnswer: 2, explanation: 'Exato! O verbo "necessitar" e Transitivo Indireto (VTI). Quando acompanhado do "se", este atua como Pronome Indeterminador do Sujeito (PIS), obrigando o verbo a ficar no singular.' },
+            { id: 4, subjectId: 'funcoes_se', text: 'Se passarmos a frase "Vende-se casa" para o plural, a forma correta sera:', options: ['Vende-se casas.', 'Vendem-se casas.', 'Vendem-se casa.', 'Vende-se as casas.', 'Venderam-se a casa.'], correctAnswer: 1, explanation: 'Correto! O verbo "Vender" e VTD. Logo, o "se" e Particula Apassivadora. "Casas" e o sujeito paciente e o verbo deve concordar com ele no plural: Vendem-se casas.' },
+            { id: 5, subjectId: 'crase', text: 'Assinale a frase em que o uso do acento indicativo de crase esta de acordo com a norma-padrao:', options: ['Entregou o documento a minha secretaria.', 'O professor referiu-se a que estava sentada na frente.', 'Fomos a padaria comprar pao.', 'Todas as alternativas estao corretas.'], correctAnswer: 3, explanation: 'Todas estao certas! "A minha" (facultativo antes de pronome possessivo feminino). "A que" (crase antes de "que" quando o "a" e pronome demonstrativo = aquela). "A padaria" (regra geral).' },
+            { id: 6, subjectId: 'adj_adnominal_vs_comp_nominal', text: 'Em "A resposta do aluno foi excelente" e "A resposta ao aluno demorou", os termos destacados sao, respetivamente:', options: ['Complemento Nominal e Adjunto Adnominal', 'Adjunto Adnominal e Complemento Nominal', 'Objeto Indireto e Complemento Nominal', 'Adjunto Adverbial e Adjunto Adnominal'], correctAnswer: 1, explanation: 'Perfeito! "A resposta DO aluno": o aluno praticou a acao (agente = Adjunto Adnominal). "A resposta AO aluno": o aluno sofreu a acao, foi o alvo da resposta (paciente = Complemento Nominal).' },
+            { id: 7, subjectId: 'sujeito', text: 'Em "Temos vagas para vendedores", o sujeito e classificado como:', options: ['Sujeito inexistente', 'Sujeito simples', 'Sujeito oculto', 'Sujeito indeterminado'], correctAnswer: 2, explanation: 'Correto! O verbo esta na 1a pessoa do plural. O sujeito e oculto: "nos".' },
+            { id: 8, subjectId: 'sujeito', text: 'Em "Ha vagas para vendedores", a classificação correta e:', options: ['Sujeito simples: vagas', 'Sujeito composto', 'Sujeito indeterminado', 'Oração sem sujeito'], correctAnswer: 3, explanation: 'Correto! O verbo HAVER no sentido de existir e impessoal. Portanto, oração sem sujeito.' },
+            { id: 9, subjectId: 'sujeito', text: 'Assinale a oração sem sujeito:', options: ['Julgaram improcedente a reclamacao.', 'Sobrou tempo suficiente.', 'Choveu intensamente nesse fim de semana.', 'Roubaram o carro do vizinho.'], correctAnswer: 2, explanation: 'Correto! "Choveu" (fenomeno da natureza, sentido literal) forma oração sem sujeito.' },
+            { id: 10, subjectId: 'sujeito', text: 'Em "Precisa-se de funcionarios", o "se" e:', options: ['Particula apassivadora', 'Pronome reflexivo', 'Pronome indeterminador do sujeito', 'Conjunção integrante'], correctAnswer: 2, explanation: 'Correto! O verbo "precisar" e VTI. Com VTI + se, temos pronome indeterminador do sujeito.' },
+            { id: 11, subjectId: 'sujeito', text: 'Em "As professoras estao em reuniao", o sujeito e:', options: ['Composto', 'Simples', 'Indeterminado', 'Inexistente'], correctAnswer: 1, explanation: 'Correto! Ha apenas um nucleo (professoras), logo sujeito simples.' },
+            { id: 12, subjectId: 'sujeito', text: 'A frase "Faz muito frio em Londres" apresenta:', options: ['Sujeito simples', 'Sujeito oculto', 'Sujeito indeterminado', 'Oração sem sujeito'], correctAnswer: 3, explanation: 'Correto! O verbo FAZER indicando clima e impessoal, portanto oração sem sujeito.' },
+            { id: 13, subjectId: 'sujeito', text: 'Em "A maioria dos alunos chegou atrasada", o nucleo do sujeito e:', options: ['Alunos', 'Maioria', 'Atrasada', 'Chegou'], correctAnswer: 1, explanation: 'Correto! O nucleo do sujeito e "maioria"; portanto, sujeito simples.' },
+            { id: 14, subjectId: 'sujeito', text: 'Em "Anunciaram a morte do prefeito", sem contexto adicional, o sujeito e:', options: ['Oculto', 'Composto', 'Indeterminado', 'Inexistente'], correctAnswer: 2, explanation: 'Correto! Verbo na 3a pessoa do plural sem referencia contextual: sujeito indeterminado.' },
+            { id: 15, subjectId: 'sujeito', text: 'Em "Ainda e cedo", temos:', options: ['Sujeito simples', 'Sujeito oculto', 'Sujeito indeterminado', 'Oração sem sujeito'], correctAnswer: 3, explanation: 'Correto! Verbo SER em expressao temporal pode ser impessoal: oração sem sujeito.' },
+            { id: 16, subjectId: 'substantivo', text: 'Assinale a alternativa em que o substantivo destacado e abstrato:', options: ['pedra', 'cidade', 'amor', 'janela'], correctAnswer: 2, explanation: 'Correto! "Amor" depende de um ser para se manifestar; por isso e substantivo abstrato.' },
+            { id: 17, subjectId: 'artigo_numeral', text: 'Em "Art. 10", a forma recomendada em linguagem juridica para leitura do numero e:', options: ['decimo', 'dez', 'decimo primeiro', 'um zero'], correctAnswer: 1, explanation: 'Correto! Em textos legais, usa-se ordinal até 9o e cardinal a partir de 10.' },
+            { id: 18, subjectId: 'pronomes', text: 'A alternativa correta e:', options: ['Entre mim e estudar, escolho descansar.', 'Entre eu e estudar, escolho descansar.', 'Para mim fazer a prova, preciso de silencio.', 'Para eu estudou, preciso de tempo.'], correctAnswer: 1, explanation: 'Correto! Depois de preposição + infinitivo, usa-se pronome reto: "entre eu e estudar".' },
+            { id: 19, subjectId: 'verbos', text: 'Em "Assisti ao filme ontem", o verbo "assistir" classifica-se como:', options: ['VTD', 'VTI', 'VI', 'VL'], correctAnswer: 1, explanation: 'Correto! No sentido de ver/presenciar, "assistir" rege preposição "a" (VTI).' },
+            { id: 20, subjectId: 'concordancia_nominal', text: 'Assinale a opcao correta:', options: ['Seguem anexo os documentos.', 'Seguem anexos os documentos.', 'Segue anexas os documentos.', 'Segue anexo as planilhas.'], correctAnswer: 1, explanation: 'Correto! "Anexos" concorda com "documentos" (masculino plural).' },
+            { id: 21, subjectId: 'coesao_coerencia', text: 'No trecho "Maria chegou. Ela sentou.", o termo "Ela" realiza coesao:', options: ['sequencial', 'referencial anaforica', 'referencial cataforica', 'lexical por sinonimia'], correctAnswer: 1, explanation: 'Correto! "Ela" retoma "Maria", portanto ha coesao referencial anaforica.' },
+            { id: 22, subjectId: 'tipologia_textual', text: 'Um texto que apresenta tese, argumentos e tentativa de convencimento e predominantemente:', options: ['narrativo', 'descritivo', 'dissertativo-argumentativo', 'injuntivo'], correctAnswer: 2, explanation: 'Correto! Esses elementos caracterizam a dissertacao argumentativa.' },
+            { id: 23, subjectId: 'interpretacao_textual', text: 'Quando a resposta esta literalmente escrita no texto, trata-se de:', options: ['inferencia', 'interpretação ampla', 'compreensao textual', 'subentendido'], correctAnswer: 2, explanation: 'Correto! Compreensao textual depende de informacao explicita no texto.' },
+            { id: 24, subjectId: 'reescritura', text: 'Uma reescrita adequada deve, antes de tudo, preservar:', options: ['o tamanho do período', 'a ordem original das palavras', 'o sentido nuclear do enunciado', 'a mesma pontuacao sempre'], correctAnswer: 2, explanation: 'Correto! O criterio central e manter o sentido nuclear sem distorcao.' },
+            { id: 25, subjectId: 'período', text: 'A frase "Quando o edital saiu, os candidatos comemoraram" e um período:', options: ['simples', 'composto por coordenacao', 'composto por subordinacao', 'sem oração principal'], correctAnswer: 2, explanation: 'Correto! Ha subordinada temporal e oração principal, logo período composto por subordinacao.' },
+            { id: 26, subjectId: 'oracoes_subordinadas_adverbiais', text: 'Em "Embora cansado, ele continuou estudando", a oração subordinada adverbial e:', options: ['causal', 'concessiva', 'consecutiva', 'final'], correctAnswer: 1, explanation: 'Correto! "Embora" introduz ideia de concessão.' },
+            { id: 27, subjectId: 'oracoes_adjetivas', text: 'Em "Os alunos que estudam passam", a oração destacada e:', options: ['adjetiva explicativa', 'substantiva objetiva', 'adjetiva restritiva', 'adverbial causal'], correctAnswer: 2, explanation: 'Correto! Sem virgula e com restricao do referente: adjetiva restritiva.' },
+            { id: 28, subjectId: 'complementos_verbais', text: 'Em "Entreguei o recurso ao fiscal", temos:', options: ['apenas OD', 'apenas OI', 'OD e OI', 'predicativo e aposto'], correctAnswer: 2, explanation: 'Correto! "o recurso" = OD e "ao fiscal" = OI (verbo VTDI).' },
+            { id: 29, subjectId: 'adjetivo', text: 'A forma "belissimo" e classificada como:', options: ['comparativo de igualdade', 'superlativo absoluto sintetico', 'superlativo relativo', 'comparativo de superioridade'], correctAnswer: 1, explanation: 'Correto! "Belissimo" e superlativo absoluto sintetico.' },
+            { id: 30, subjectId: 'adverbio_interjeicao', text: 'Em "Ele fala muito bem", a palavra "muito" modifica:', options: ['o substantivo', 'o adverbio', 'a interjeição', 'o sujeito'], correctAnswer: 1, explanation: 'Correto! "bem" e adverbio, e "muito" intensifica esse adverbio.' },
+            { id: 31, subjectId: 'preposição', text: 'Em "Morreu de fome", o valor da preposição "de" e:', options: ['companhia', 'causa', 'destino', 'oposicao'], correctAnswer: 1, explanation: 'Correto! A preposição indica causa na expressao.' },
+            { id: 32, subjectId: 'vozes_verbais', text: 'A forma passiva analitica de "A banca corrigiu as provas" e:', options: ['Corrigiram-se as provas pela banca.', 'As provas foram corrigidas pela banca.', 'As provas corrigem pela banca.', 'Corrigiu-se as provas.'], correctAnswer: 1, explanation: 'Correto! Estrutura da passiva analitica: SER + participio + agente da passiva.' },
+            { id: 33, subjectId: 'colocacao_pronominal', text: 'A frase correta, segundo a norma-padrao, e:', options: ['Me disseram a verdade.', 'Disseram-me a verdade.', 'Disseram a verdade-me.', 'Me disseram-me a verdade.'], correctAnswer: 1, explanation: 'Correto! Em inicio de período formal, prefere-se enclise: "Disseram-me".' },
+            { id: 34, subjectId: 'pontuacao', text: 'Assinale a frase corretamente pontuada:', options: ['O candidato, estudou muito.', 'O candidato estudou, muito.', 'O candidato estudou muito.', 'O, candidato estudou muito.'], correctAnswer: 2, explanation: 'Correto! Não se separa sujeito de verbo por virgula.' },
+            { id: 35, subjectId: 'valores_do_que', text: 'Em "Sei que ele vira", o "que" e:', options: ['pronome relativo', 'conjunção integrante', 'preposição', 'interjeição'], correctAnswer: 1, explanation: 'Correto! Introduz oração substantiva objetiva direta; logo, conjunção integrante.' },
+            { id: 36, subjectId: 'fonetica', text: 'A palavra "saude" apresenta:', options: ['ditongo', 'tritongo', 'hiato', 'digrafo consonantal'], correctAnswer: 2, explanation: 'Correto! "sa-u-de" tem encontro de vogais em silabas diferentes, caracterizando hiato.' },
+            { id: 37, subjectId: 'roteiro_aulas', text: 'Em questao de reescritura, o criterio principal para considerar uma alternativa correta e:', options: ['manter a mesma ordem de palavras', 'manter o mesmo numero de linhas', 'preservar o sentido nuclear do enunciado', 'manter toda pontuacao original'], correctAnswer: 2, explanation: 'Correto! A reescrita pode mudar estrutura, mas deve preservar o sentido central.' },
+            { id: 38, subjectId: 'roteiro_aulas', text: 'A oposicao "texto coeso, porem incoerente" significa que:', options: ['não ha conectivos', 'ha conexao formal, mas o sentido global falha', 'o texto esta sem pontuacao', 'o texto e apenas narrativo'], correctAnswer: 1, explanation: 'Correto! Coesao trata da forma de conexao; coerencia, da logica e do sentido global.' },
+            { id: 39, subjectId: 'roteiro_aulas', text: 'Em "Para eu estudar, preciso de silencio", a escolha de "eu" (e não "mim") ocorre porque:', options: ['eu e mais formal', 'ha verbo no infinitivo ligado ao pronome', 'mim não existe na norma culta', 'o pronome esta após preposição simples'], correctAnswer: 1, explanation: 'Correto! Quando o pronome funciona como sujeito de infinitivo, usa-se forma reta.' },
+            { id: 40, subjectId: 'roteiro_aulas', text: 'No cronograma sugerido, qual bloco fica para o Dia 7?', options: ['Aulas 27 e 28', 'Aulas 32 e 33', 'Aula 43 + revisão geral + bateria de questões', 'Aula 39 apenas'], correctAnswer: 2, explanation: 'Correto! O fechamento e dedicado a reescritura e consolidacao final com questões.' }
+        ];
+
+        StudyMapApp.init({
+            mindMapData,
+            questionsData,
+            countLabel: (document.getElementById("materiasCount")?.textContent || "Topicos").trim()
+        });
+    </script>
+</body>
+</html>

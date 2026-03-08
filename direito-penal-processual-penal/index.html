@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direito Penal - Mapas & Questões</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="../assets/js/study-map-app.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bg-grid-pattern { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 32px 32px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-red-700 text-white p-4 rounded-full shadow-xl hover:bg-red-800 transition-colors">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-red-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-scales text-red-300"></i>
+                    Direito Penal
+                </h1>
+                <p class="text-xs text-red-200 mt-1 font-medium">Mapas & Questões</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-red-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-red-600 hover:text-red-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar assunto..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-colors">
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2" id="materiasCount">Tópicos</h2>
+            <nav id="subjectList" class="space-y-1.5 pb-20 md:pb-0"></nav>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm justify-between shrink-0">
+            <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 w-1/3">
+                <i class="fa-solid fa-table-columns"></i>
+                <span id="headerTitle" class="truncate font-medium"></span>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center shrink-0">
+                <button id="tabMap" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Mapa Mental</span>
+                    <span class="sm:hidden">Teoria</span>
+                </button>
+                <button id="tabQuiz" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span class="hidden sm:inline">Questões Práticas</span>
+                    <span class="sm:hidden">Questões</span>
+                </button>
+            </div>
+            <div class="w-1/3 hidden md:block"></div>
+        </header>
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="mapContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in"></div>
+            <div id="quizContainer" class="hidden h-full fade-in pb-20"></div>
+        </div>
+    </main>
+    <script>
+        const mindMapData = [
+            { id: 'conceitos_direito_penal', title: 'Conceitos de Direito Penal', color: 'bg-red-500', nodes: [
+                { title: 'Crime', content: 'Acao ou omissao contraria a lei penal e punivel.' },
+                { title: 'Pena', content: 'Consequencia legal imposta ao autor de crime.' },
+                { title: 'Culpabilidade', content: 'Capacidade de ser responsabilizado penalmente.' }
+            ]},
+            { id: 'classificacao_crimes', title: 'Classificação de Crimes', color: 'bg-red-600', nodes: [
+                { title: 'Crimes Contra a Pessoa', content: 'Homicidio, lesao corporal, estupro.' },
+                { title: 'Crimes Contra o Patrimonio', content: 'Roubo, furto, estelionato.' },
+                { title: 'Crimes Contra a Administração', content: 'Peculato, abuso de poder, falsidade.' }
+            ]},
+            { id: 'direito_processual_penal', title: 'Direito Processual Penal', color: 'bg-rose-500', nodes: [
+                { title: 'Inquerito Policial', content: 'Investigacao inicial de crimes.' },
+                { title: 'Fases do Processo Penal', content: 'Inquerto, denuncia, audiencia, sentenca.' },
+                { title: 'Direitos da Defesa', content: 'Contradicao, ampla defesa, presuncao de inocencia.' }
+            ]},
+            { id: 'punicoes_penas', title: 'Punicoes e Penas', color: 'bg-orange-600', nodes: [
+                { title: 'Penas Privativas de Liberdade', content: 'Prisao, detencao, recluso.' },
+                { title: 'Penas Alternativas', content: 'Multa, prestacao de servicos, limitacao de direitos.' },
+                { title: 'Agravantes e Atenuantes', content: 'Circunstancias que aumentam ou diminuem pena.' }
+            ]},
+            { id: 'garantias_constitucionais', title: 'Garantias Constitucionais', color: 'bg-pink-600', nodes: [
+                { title: 'Presuncao de Inocencia', content: 'Acusado e inocente até sentenca condenatoria.' },
+                { title: 'Direito ao Silencio', content: 'Ninguem e obrigado a depor contra si mesmo.' },
+                { title: 'Direito a Defesa Tecnica', content: 'Direito a ser assistido por advogado.' }
+            ]}
+        ];
+        const questionsData = [
+            { id: 1, subjectId: 'conceitos_direito_penal', text: 'O que e crime na visao do direito penal?', options: ['Um erro', 'Uma acao contraria a lei penal', 'Uma intencao', 'Uma opiniao'], correctAnswer: 1, explanation: 'Correto! Crime e uma acao ou omissao contraria a lei penal e punivel.' },
+            { id: 2, subjectId: 'garantias_constitucionais', text: 'Qual e um principio fundamental do processo penal brasileiro?', options: ['Culpabilidade automatica', 'Presuncao de inocencia', 'Confissao obrigatoria', 'Prisao sem prova'], correctAnswer: 1, explanation: 'Correto! O principio da presuncao de inocencia garante que todo acusado e inocente até prova em contrario.' }
+        ];
+
+        StudyMapApp.init({
+            mindMapData,
+            questionsData,
+            countLabel: (document.getElementById("materiasCount")?.textContent || "Topicos").trim()
+        });
+    </script>
+</body>
+</html>

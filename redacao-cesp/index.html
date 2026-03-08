@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redação CESP - Mapas & Questões</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        .topic-card {
+            border-left: 4px solid;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-red-600 text-white p-4 rounded-full shadow-xl hover:bg-red-700 transition-colors" aria-label="Abrir menu">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-red-700 to-red-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-feather text-red-300"></i>
+                    Redação CESP
+                </h1>
+                <p class="text-xs text-red-200 mt-1 font-medium">Dissertação & Técnicas</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-red-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-red-600 hover:text-red-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar tópico..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-colors" aria-label="Procurar tópico">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Módulos</h2>
+            <nav id="topicList" class="space-y-1.5 pb-20 md:pb-0">
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm justify-between shrink-0">
+            <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 w-1/3">
+                <i class="fa-solid fa-pen-fancy"></i>
+                <span id="headerTitle" class="truncate font-medium"></span>
+            </div>
+
+            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center shrink-0">
+                <button id="tabContent" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Conteúdo</span>
+                    <span class="sm:hidden">Aula</span>
+                </button>
+                <button id="tabTips" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span class="hidden sm:inline">Dicas</span>
+                </button>
+            </div>
+
+            <div class="w-1/3 hidden md:block"></div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="contentContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+                <div class="text-center text-slate-500 py-12">
+                    <i class="fa-solid fa-arrow-left text-4xl mb-4 opacity-50"></i>
+                    <p>Escolha um tópico no menu para começar</p>
+                </div>
+            </div>
+
+            <div id="tipsContainer" class="hidden max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const topics = [
+            {
+                id: 'desenvolvimento',
+                title: 'Desenvolvimento',
+                icon: 'fa-expand',
+                color: 'border-emerald-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Desenvolvimento da Redação CESP</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Estrutura do Desenvolvimento</h3>
+                            <p class="text-slate-700 mb-4">O desenvolvimento é o coração da redação CESP. É onde você apresenta seus argumentos, análises e sustenta sua tese com evidências.</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Cada parágrafo = uma ideia:</strong> Evite misturar argumentos</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Tema + Argumentação:</strong> Comece com a ideia central, depois desenvolva</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Exemplos práticos:</strong> Sustente com dados, casos reais ou evidências</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Coesão entre parágrafos:</strong> Use conectivos para ligar ideias</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-blue-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Estratégias de Argumentação</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Prova por Exemplificação:</strong> Apresente casos concretos que comprovem seu ponto
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Prova por Comparação:</strong> Compar situações semelhantes para fortalecer argumento
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Prova por Autoridade:</strong> Cite dados, estatísticas, estudos ou especialistas
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Prova por Raciocínio Lógico:</strong> Conduza o leitor através de uma lógica irrefutável
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-purple-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Modelo de Parágrafo de Desenvolvimento</h3>
+                            <div class="bg-slate-100 p-4 rounded font-mono text-sm space-y-2 text-slate-700">
+                                <p><strong>Tópico Frasal:</strong> "A segurança pública é fundamental para..."</p>
+                                <p><strong>Desenvolvimento:</strong> Explique, analise, desenvolva a ideia</p>
+                                <p><strong>Exemplificação:</strong> Dados, casos, estudos que comprovem</p>
+                                <p><strong>Encerramento:</strong> Retome o tema central de forma sucinta</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">💡 Dica Crucial</h3>
+                            <p class="text-slate-700 text-sm mb-3">Respeite o roteiro! Se foram solicitados 3 tópicos no desenvolvimento, desenvolva exatamente 3 parágrafos temáticos. Não desvie do proposto.</p>
+                            <p class="text-slate-700 text-sm">Cada parágrafo deve conter uma ideia principal suportada por evidências específicas.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'conclusao',
+                title: 'Conclusão',
+                icon: 'fa-flag-checkered',
+                color: 'border-indigo-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Conclusão da Redação CESP</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-indigo-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Função da Conclusão</h3>
+                            <p class="text-slate-700 mb-4">A conclusão não é apenas o fechamento - ela deve:</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>✓ <strong>Retomar a tese:</strong> Reafirme sua posição central</li>
+                                <li>✓ <strong>Sintetizar argumentos:</strong> Resuma os pontos principais sem repetir</li>
+                                <li>✓ <strong>Apresentar soluções:</strong> Proponha ações ou mudanças concretas</li>
+                                <li>✓ <strong>Fechar com impacto:</strong> Deixe uma perspectiva futura ou de esperança</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-rose-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Tipos de Conclusão</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Síntese + Perspectiva:</strong> Resuma e projete para o futuro
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Síntese + Propostas:</strong> Resuma e sugira soluções concretas
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Síntese + Agir:</strong> Resuma e convoque ação/responsabilidade
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Síntese + Questão:</strong> Resuma e lance questão provocadora (cuidado!)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-amber-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Estrutura Recomendada</h3>
+                            <div class="bg-amber-50 p-4 rounded text-slate-700 text-sm space-y-2">
+                                <p><strong>Parte 1:</strong> Conectivo de conclusão + Retomada da tese</p>
+                                <p><strong>Parte 2:</strong> Síntese breve dos argumentos principais</p>
+                                <p><strong>Parte 3:</strong> Proposições ou perspectivas futuras</p>
+                                <p><strong>Parte 4:</strong> Fechamento com impacto (sem deixar em aberto)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">⚠️ Erros Comuns</h3>
+                            <p class="text-slate-700 text-sm mb-2"><strong>NÃO faça:</strong></p>
+                            <ul class="text-slate-700 text-sm space-y-1">
+                                <li>✗ Conclusão vaga ou genérica</li>
+                                <li>✗ Repetir literalmente argumentos do desenvolvimento</li>
+                                <li>✗ Introduzir argumentos novos na conclusão</li>
+                                <li>✗ Deixar questões em aberto sem resposta</li>
+                                <li>✗ Usar conclusão para introduzir posições contrárias</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'nocoes-gerais',
+                title: 'Noções Gerais',
+                icon: 'fa-graduation-cap',
+                color: 'border-red-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Noções Gerais sobre Redação CESP</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-red-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">O que é Redação CESP?</h3>
+                            <p class="text-slate-700 mb-3">A banca CESP (Centro de Seleção e de Promoção de Eventos) tem cobranças atípicas e correção atípica quando se trata de redação. Ela não utiliza apenas titulação simples, mas apresenta um roteiro específico sobre o que você vai falar dentro do seu texto.</p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-blue-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Características Principais</h3>
+                            <ul class="space-y-2 text-slate-700">
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Dissertação pautada em roteiro:</strong> A CESP delimita sobre o que você vai falar</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Conteúdo é 90-95% da nota:</strong> O foco é na argumentação, não na gramática</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Correção gramatical:</strong> Entendida como obrigação, não pontuada como diferencial</li>
+                                <li><i class="fa-solid fa-check text-green-600 mr-2"></i><strong>Estrutura clara:</strong> Demanda organização de ideias bem definida</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-red-600"></i>Diferença para Outras Bancas</h3>
+                            <p class="text-slate-700 text-sm">Enquanto bancas como IBFC, CCGRI e FGV pedem argumentação simples com apenas uma frase temática, a CESP exige uma dissertação completa com roteiro específico, fazendo com que você maximize os 90-95% de nota baseada em conteúdo.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'introducao',
+                title: 'Introdução',
+                icon: 'fa-door-open',
+                color: 'border-orange-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Introdução à Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-orange-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Estrutura Básica</h3>
+                            <p class="text-slate-700 mb-4">A redação CESP segue uma estrutura dissertativa que combina argumentação objetiva com apresentação de soluções. A introdução deve:</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>✓ Contextualizar o tema proposto</li>
+                                <li>✓ Apresentar sua tese/perspectiva</li>
+                                <li>✓ Direcionar o leitor para os argumentos</li>
+                                <li>✓ Ser clara e direta</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-amber-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Tipos de Aberturas</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-slate-50 p-3 rounded">
+                                    <strong>Dados/Estatísticas:</strong> "Segundo pesquisas recentes..."
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded">
+                                    <strong>Pergunta Provocadora:</strong> "Como resolver o problema de...?"
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded">
+                                    <strong>Situação-Problema:</strong> "Diante da realidade de..."
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded">
+                                    <strong>Conceitual:</strong> "Entende-se por... a capacidade..."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">⚠️ Evite</h3>
+                            <p class="text-slate-700 text-sm">Não comece com frases genéricas como "A educação é importante" ou "Vivemos em tempos modernos". Seja específico e direto ao ponto.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'regras-escrita',
+                title: 'Regras de Escrita',
+                icon: 'fa-pen-nib',
+                color: 'border-yellow-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Regras de Escrita para Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-yellow-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Erros Comuns em Redação</h3>
+                            <div class="space-y-4 text-slate-700 text-sm">
+                                <div class="bg-red-50 p-4 rounded border border-red-200">
+                                    <strong class="text-red-700">❌ Uso incorreto do "onde"</strong>
+                                    <p class="mt-2">Errado: "A situação onde vivemos..."</p>
+                                    <p>Correto: "A situação em que vivemos..." ou "O lugar onde vivemos..."</p>
+                                </div>
+
+                                <div class="bg-red-50 p-4 rounded border border-red-200">
+                                    <strong class="text-red-700">❌ Regência do verbo "corroborar"</strong>
+                                    <p class="mt-2">Errado: "Corrobora para..." ou "Corrobora com..."</p>
+                                    <p>Correto: "Corrobora a ideia..." (VTD - Transitividade Direta)</p>
+                                    <p class="mt-2 text-xs"><em>Significa confirmar, comprovar, reafirmar</em></p>
+                                </div>
+
+                                <div class="bg-red-50 p-4 rounded border border-red-200">
+                                    <strong class="text-red-700">❌ Acentuação Gráfica</strong>
+                                    <p class="mt-2">Cuidado com: "hífens", "vírgulas", "ponto e vírgula" e sua função sintática</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-green-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Dicas de Redação Limpa</h3>
+                            <ul class="space-y-3 text-slate-700">
+                                <li>✓ <strong>Use palavras precisas:</strong> Evite diminutivos e gírias</li>
+                                <li>✓ <strong>Revise regências verbais:</strong> Cada verbo tem suas exigências</li>
+                                <li>✓ <strong>Parágrafo coeso:</strong> Cada parágrafo deve ter uma ideia central</li>
+                                <li>✓ <strong>Transições claras:</strong> Use conectivos adequados</li>
+                                <li>✓ <strong>Ponto e vírgula com função:</strong> Não use como substituição de ponto</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'esqueletos',
+                title: 'Esqueletos Estruturais',
+                icon: 'fa-sitemap',
+                color: 'border-purple-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Esqueletos Estruturais para Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-purple-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">O que é um Esqueleto?</h3>
+                            <p class="text-slate-700 mb-4">Um esqueleto estrutural é um roteiro que você utiliza para organizar suas ideias e apresentá-las de forma coesa e coerente. Ele:</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>✓ Otimiza seu tempo na prova</li>
+                                <li>✓ Facilita a estruturação de ideias</li>
+                                <li>✓ Deixa o texto bem organizado</li>
+                                <li>✓ Mantém ideias ligadas (coesão)</li>
+                                <li>✓ Garante argumentação clara</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-indigo-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Esqueleto com Roteiro de Tópicos</h3>
+                            <p class="text-slate-700 mb-4 text-sm"><em>Usado quando a banca te apresenta um roteiro com tópicos específicos</em></p>
+                            <div class="bg-slate-100 p-4 rounded font-mono text-sm space-y-2 text-slate-700">
+                                <p><strong>1. INTRODUÇÃO:</strong> Contextualização + Apresentação dos tópicos</p>
+                                <p><strong>2. DESENVOLVIMENTO (Tópico 1):</strong> Argumentação do primeiro ponto</p>
+                                <p><strong>3. DESENVOLVIMENTO (Tópico 2):</strong> Argumentação do segundo ponto</p>
+                                <p><strong>4. DESENVOLVIMENTO (Tópico 3):</strong> Argumentação do terceiro ponto</p>
+                                <p><strong>5. CONCLUSÃO:</strong> Síntese + Propostas de solução</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-violet-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Esqueleto Tipo "Problema-Causa-Solução"</h3>
+                            <p class="text-slate-700 mb-4 text-sm"><em>Quando o roteiro não é estruturado em tópicos</em></p>
+                            <div class="bg-violet-50 p-4 rounded text-sm space-y-2 text-slate-700">
+                                <p><strong>1. INTRODUÇÃO:</strong> Apresente o problema com contexto</p>
+                                <p><strong>2. DESENVOLVIMENTO 1:</strong> Analise as CAUSAS do problema</p>
+                                <p><strong>3. DESENVOLVIMENTO 2:</strong> Discuta as CONSEQUÊNCIAS</p>
+                                <p><strong>4. DESENVOLVIMENTO 3:</strong> Proponha SOLUÇÕES práticas</p>
+                                <p><strong>5. CONCLUSÃO:</strong> Retome e finalize com esperança/ação</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">💡 Importância do Esqueleto</h3>
+                            <p class="text-slate-700 text-sm">Não trabalhar com esqueletos prontos, mas com esqueletos estruturais que você adapta ao roteiro específico. Use conectivos e comandos para apresentar suas respostas de forma clara. Um bom esqueleto economiza entre 5-10 minutos de prova!</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'textos-referencia',
+                title: 'Textos de Referência',
+                icon: 'fa-file-lines',
+                color: 'border-teal-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Como Usar Textos de Referência</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-teal-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Importância dos Textos de Apoio</h3>
+                            <p class="text-slate-700 mb-4">Os textos de referência NÃO são decorativos. Eles:</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li><i class="fa-solid fa-check text-teal-600 mr-2"></i>Fornecem argumentos já estruturados</li>
+                                <li><i class="fa-solid fa-check text-teal-600 mr-2"></i>Oferecem dados e informações confiáveis</li>
+                                <li><i class="fa-solid fa-check text-teal-600 mr-2"></i>Servem como base para sua argumentação</li>
+                                <li><i class="fa-solid fa-check text-teal-600 mr-2"></i>Legitimam suas posições com referências bem-vindo</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-cyan-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Leitura Estratégica</h3>
+                            <p class="text-slate-700 mb-3 text-sm">Ao ler os textos de referência:</p>
+                            <div class="space-y-2 text-slate-700 text-sm">
+                                <div class="bg-cyan-50 p-3 rounded">
+                                    <strong>1. Identificar Ideias-Chave:</strong> Sublinhe ou marque informações relevantes
+                                </div>
+                                <div class="bg-cyan-50 p-3 rounded">
+                                    <strong>2. Extrair Dados:</strong> Anote números, datas, percentuais que possam usar
+                                </div>
+                                <div class="bg-cyan-50 p-3 rounded">
+                                    <strong>3. Conectar ao Roteiro:</strong> Veja como cada texto se relaciona com os tópicos
+                                </div>
+                                <div class="bg-cyan-50 p-3 rounded">
+                                    <strong>4. Encontrar Argumentos:</strong> Localize as provas e evidências oferecidas
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-teal-600">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Como Incorporar sem Plágio</h3>
+                            <p class="text-slate-700 mb-3 text-sm">Você pode usar os textos de forma:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ <strong>Adaptação:</strong> Reescreva a ideia com suas palavras</li>
+                                <li>✓ <strong>Parafraseamento:</strong> Expressa o conceito de forma diferente</li>
+                                <li>✓ <strong>Citação indireta:</strong> Mencione a ideia sem aspas, mas referencie a fonte</li>
+                                <li>✓ <strong>Exemplificação:</strong> Use os dados como exemplos de seu ponto</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-teal-50 border border-teal-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">🎯 Estratégia Ouro</h3>
+                            <p class="text-slate-700 text-sm">Leia os textos ANTES de começar a escrever. Use-os para inspirar seus argumentos, não para copiar. O texto reescrito com suas ideias e argumentação própria sempre terá maior valência para os avaliadores.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'conectivos',
+                title: 'Conectivos e Transições',
+                icon: 'fa-link',
+                color: 'border-orange-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Conectivos e Transições em Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-orange-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Importância dos Conectivos</h3>
+                            <p class="text-slate-700 mb-4">Conectivos são a cola que une suas ideias. Eles:</p>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>✓ Mostram relações entre parágrafos</li>
+                                <li>✓ Guiam o leitor através de sua argumentação</li>
+                                <li>✓ Demonstram domínio de linguagem coesa</li>
+                                <li>✓ Facilitam a compreensão do texto</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-amber-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Conectivos por Função</h3>
+                            <div class="space-y-4 text-slate-700 text-sm">
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Introdução de Argumento:</strong> Além disso, Outrossim, Mais ainda, Ainda
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Conclusão/Síntese:</strong> Portanto, Logo, Assim, Desse modo, Em conclusão
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Oposição:</strong> Porém, No entanto, Todavia, Contudo, Ainda que
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Exemplificação:</strong> Por exemplo, Isto é, Ou seja, Por ilustração
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Causa/Consequência:</strong> Porque, Pois, Por isso, Como resultado, Portanto
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Tempo:</strong> Primeiramente, Em seguida, Posteriormente, Finalmente, Enquanto isso
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Comparação:</strong> Similarmente, Igualmente, Da mesma forma, Como
+                                </div>
+                                <div class="bg-amber-50 p-3 rounded">
+                                    <strong>Intensidade:</strong> Com efeito, De fato, Realmente, Indubitavelmente
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-yellow-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Transições entre Parágrafos</h3>
+                            <p class="text-slate-700 mb-3 text-sm">Exemplo de transição efetiva:</p>
+                            <div class="bg-yellow-50 p-4 rounded font-serif text-sm text-slate-700">
+                                <p className="mb-2"><em>"As políticas de segurança pública têm se mostrado ineficazes..."</em> (Fim do primeiro parágrafo)</p>
+                                <p><strong>Portanto,</strong> <em>"faz-se necessário implementar mudanças estruturais..."</em> (Início do segundo parágrafo)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">⚠️ Evite</h3>
+                            <p class="text-slate-700 text-sm">Não abuse de conectivos - a cada 2-3 sentenças no máximo um conectivo. Conectivos em excesso deixam o texto cansativo e pedante.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'folha-redacao',
+                title: 'Folha de Redação - Dicas Práticas',
+                icon: 'fa-pen-clip',
+                color: 'border-pink-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Como Aproveitar Bem a Folha de Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-pink-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Preparação da Folha</h3>
+                            <ul class="space-y-2 text-slate-700">
+                                <li><i class="fa-solid fa-check text-pink-600 mr-2"></i><strong>Identifição:</strong> Preencha corretamente nome, número de inscrição, etc.</li>
+                                <li><i class="fa-solid fa-check text-pink-600 mr-2"></i><strong>Título:</strong> Coloque um título que reflita a proposta (quando permitido)</li>
+                                <li><i class="fa-solid fa-check text-pink-600 mr-2"></i><strong>Margens:</strong> Respeite as linhas de margem da folha</li>
+                                <li><i class="fa-solid fa-check text-pink-600 mr-2"></i><strong>Espaçamento:</strong> Use espaçamento duplo entre linhas para melhor legibilidade</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-rose-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Orientações de Escrita</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Letra Legível:</strong> A banca precisa ler facilmente - letra em caixa alta ou cursiva clara
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Caneta Azul ou Preta:</strong> Sempre use caneta, nunca lápis (que borra)
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Sem Rasuras Grandes:</strong> Um traço fino corrigindo é aceitável, mas evite borrões
+                                </div>
+                                <div class="bg-rose-50 p-3 rounded">
+                                    <strong>Parágrafos Claros:</strong> Deixe espaço em branco entre parágrafos para facilitar leitura
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-fuchsia-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Distribuição do Espaço</h3>
+                            <p class="text-slate-700 mb-3 text-sm">Planeje sua escrita para não ficar fora do espaço:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ Introdução: ~2-3 linhas</li>
+                                <li>✓ Desenvolvimento (por tópico): ~4-5 linhas</li>
+                                <li>✓ Conclusão: ~2-3 linhas</li>
+                                <li>✓ Espaço livre: 1-2 linhas para segurança</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-violet-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Revisão Final</h3>
+                            <div class="space-y-2 text-slate-700 text-sm">
+                                <p><strong>Leia uma vez:</strong> Procure por erros de ortografia</p>
+                                <p><strong>Leia duas vezes:</strong> Verifique concordância e regên</p>
+                                <p><strong>Leia três vezes:</strong> Analise coesão e clareza das ideias</p>
+                                <p className="mt-2"><strong>Não reescreva:</strong> Se possível, evite rasuras - mantenha a elegância do texto</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-pink-50 border border-pink-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">💡 Segredo dos Aprovados</h3>
+                            <p class="text-slate-700 text-sm">Use as primeiras 2-3 linhas da folha para seu rascunho mental (esqueleto). Você pode riscar depois - ninguém vai ver. Use as linhas principais para a redação final limpa.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'gramatica',
+                title: 'Gramática Aplicada',
+                icon: 'fa-language',
+                color: 'border-green-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Gramática Aplicada à Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-green-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Uso de Vírgula em Redação</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Separar termos de mesma função:</strong> "O trabalho, a dedicação e o esforço..."
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Antes de conectivos:</strong> "Estudou muito, porém não passou."
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Após conectivo inicial:</strong> "Portanto, é necessário agir."
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Com oração adjetiva explicativa:</strong> "O Brasil, que é um país tropical..."
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>Após adjunto adverbial:</strong> "No início da prova, o candidato estava nervoso."
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>NÃO use vírgula:</strong> Entre sujeito e predicado / Entre verbo e complemento
+                                </div>
+                            </div>
+                        </div>
+                            <p class="text-slate-700 mb-4">A pontuação não é apenas decorativa - ela constrói sentido:</p>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-green-50 p-3 rounded">
+                                    <strong>Vírgula:</strong> Pausa breve; separa termos de mesma função; marca inversões
+                                </div>
+                                <div class="bg-green-50 p-3 rounded">
+                                    <strong>Ponto e vírgula:</strong> Pausa intermediária; separa orações coordenadas
+                                </div>
+                                <div class="bg-green-50 p-3 rounded">
+                                    <strong>Dois-pontos:</strong> Introduz explicação, exemplificação ou enumeração
+                                </div>
+                                <div class="bg-green-50 p-3 rounded">
+                                    <strong>Travessão:</strong> Marca diálogos, interpolações e ênfase
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-blue-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Verbos Problemáticos</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>CORROBORAR (VTD):</strong> Corrobora algo ✓ | Corrobora para ✗ | Corrobora com ✗
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>ASPIRAR:</strong> Aspirar o ar (VTD) vs. Aspirar a um cargo (VTI)
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>ASSISTIR:</strong> Assistir um filme (VTD) vs. Assistir a um show (VTI)
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <strong>VISAR:</strong> Visar o alvo (VTD) vs. Visar a resolver (VTI)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">🎯 Foco em Regência</h3>
+                            <p class="text-slate-700 text-sm">Em concursos CESP, erros de regência verbal são penalizados com frequência. Dedique tempo a memorizar verbos que costumam aparecer na redação.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'pontuacao-avancada',
+                title: 'Pontuação Avançada',
+                icon: 'fa-comma',
+                color: 'border-slate-600',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Pontuação Avançada em Redação</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-slate-600">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Ponto e Vírgula (;)</h3>
+                            <p class="text-slate-700 mb-3">Marca pausa mais forte que vírgula, mas menos que ponto:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ <strong>Entre orações coordenadas:</strong> "O trabalho é duro; a recompensa é grande."</li>
+                                <li>✓ <strong>Em enumerações complexas:</strong> "Há três pilares: eficiência, que garante o sistema; honestidade, que constrói confiança; e comprometimento."</li>
+                                <li>✗ <strong>NÃO use</strong> para substituir ponto entre ideias muito distintas</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-blue-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Dois-Pontos (:)</h3>
+                            <p class="text-slate-700 mb-3">Introduz enumeração, explicação ou citação:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ <strong>Enumeração:</strong> "A sociedade enfrenta três desafios: segurança, educação e emprego."</li>
+                                <li>✓ <strong>Explicação:</strong> "Há um fundamento importante: a democracia exige transparência."</li>
+                                <li>✓ <strong>Síntese:</strong> "Portanto, uma conclusão é inevitável: mudanças estruturais são necessárias."</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-amber-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Travessão (—)</h3>
+                            <p class="text-slate-700 mb-3">Marca pausa, ênfase ou aposto:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ <strong>Interpolação:</strong> "O candidato — apesar do nervosismo — conseguiu responder bem."</li>
+                                <li>✓ <strong>Ênfase:</strong> "Uma coisa é certa — sem educação não há futuro."</li>
+                                <li>✓ <strong>Mudança de interlocutor:</strong> (em diálogos, raramente em redação formal)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-rose-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Parênteses ( )</h3>
+                            <p class="text-slate-700 mb-3">Adiciona informação secundária ou esclarecimentos:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ "A lei (implementada em 2020) tem resultados positivos."</li>
+                                <li>✓ "Conforme dados (vide anexo), o crescimento foi de 15%."</li>
+                                <li><strong>Cuidado:</strong> Não abuse — parênteses podem desorganizar o texto</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Reticências (...)</h3>
+                            <p class="text-slate-700 mb-3">Marca pausa indeterminada ou ideia incompleta:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>✓ "A solução é complexa, envolve múltiplos atores..."</li>
+                                <li>✓ "Imagine um Brasil onde..." (ideia incompleta que o leitor completa)</li>
+                                <li><strong>Em redação formal:</strong> Use com moderação</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-300 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">⚠️ Regra de Ouro</h3>
+                            <p class="text-slate-700 text-sm">Cada sinal de pontuação tem uma função semântica específica. Não use apenas porque "acha que fica bonito". Use porque contribui para o sentido e clareza do texto.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'gestao-tempo',
+                title: 'Gestão de Tempo',
+                icon: 'fa-hourglass-end',
+                color: 'border-cyan-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Gestão de Tempo na Prova</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-cyan-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Cronograma Recomendado</h3>
+                            <p class="text-slate-700 mb-4">Para uma redação em prova com tempo limitado:</p>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-cyan-500 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 font-bold">1</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Leitura (3-5 min)</p>
+                                        <p class="text-slate-700 text-sm">Leia a proposta, o roteiro e qualquer material de apoio</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-cyan-500 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 font-bold">2</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Planejamento (5-7 min)</p>
+                                        <p class="text-slate-700 text-sm">Monte seu esqueleto e liste ideias principais</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-cyan-500 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 font-bold">3</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Redação (25-30 min)</p>
+                                        <p class="text-slate-700 text-sm">Escreva de forma fluida, seguindo seu esqueleto</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-cyan-500 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 font-bold">4</div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Revisão (3-5 min)</p>
+                                        <p class="text-slate-700 text-sm">Corrija erros grosseiros de sintaxe e ortografia</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-blue-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Estratégias Importantes</h3>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>✓ Não comece a redação sem esqueleto pronto</li>
+                                <li>✓ Respeite os parágrafos - cada ideia em um parágrafo</li>
+                                <li>✓ Use conectivos para ligar as ideias</li>
+                                <li>✓ Não tente perfeição - qualidade precisa é mais importante</li>
+                                <li>✓ Deixe espaço para revisão final</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">⏱️ Essencial</h3>
+                            <p class="text-slate-700 text-sm">O tempo de planejamento nunca é perdido - ele economiza tempo na redação. Um esqueleto bem feito reduz erros e aumenta a velocidade de escrita.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'propostas-redacao',
+                title: 'Propostas de Redação',
+                icon: 'fa-scroll',
+                color: 'border-pink-500',
+                content: `
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Propostas de Redação CESP</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-pink-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Tipos de Propostas</h3>
+                            <p class="text-slate-700 mb-4">A CESP trabalha com três tipos principais de propostas ao candidato:</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded border-l-4 border-pink-600">
+                                    <h4 class="font-bold text-slate-900 mb-2">1. Proposta para PC (Polícia Civil)</h4>
+                                    <p class="text-slate-700 text-sm mb-2"><strong>Foco:</strong> Segurança pública, investigação, procedimentos investigativos, qualificação profissional</p>
+                                    <div class="bg-white p-3 rounded mt-2 text-slate-600 text-xs">
+                                        <p><strong>Tópicos frequentes:</strong></p>
+                                        <p>• Importância da investigação no combate ao crime</p>
+                                        <p>• Qualificação e atualização de polícia</p>
+                                        <p>• Inteligência policial e tecnologia</p>
+                                        <p>• Cidadania e acesso à justiça</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded border-l-4 border-amber-600">
+                                    <h4 class="font-bold text-slate-900 mb-2">2. Proposta para PM (Polícia Militar)</h4>
+                                    <p class="text-slate-700 text-sm mb-2"><strong>Foco:</strong> Ordem pública, prevenção, patrulhamento, segurança comunitária, função social</p>
+                                    <div class="bg-white p-3 rounded mt-2 text-slate-600 text-xs">
+                                        <p><strong>Tópicos frequentes:</strong></p>
+                                        <p>• PM como instituição preventiva, não apenas repressiva</p>
+                                        <p>• Relação com comunidade e confiança pública</p>
+                                        <p>• Patrulhamento inteligente e efetivo</p>
+                                        <p>• Treinamento e ética na corporação</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded border-l-4 border-red-600">
+                                    <h4 class="font-bold text-slate-900 mb-2">3. Proposta para PP (Polícia Penal)</h4>
+                                    <p class="text-slate-700 text-sm mb-2"><strong>Foco:</strong> Sistema penitenciário, execução penal, ressocialização, segurança nas unidades</p>
+                                    <div class="bg-white p-3 rounded mt-2 text-slate-600 text-xs">
+                                        <p><strong>Tópicos frequentes:</strong></p>
+                                        <p>• Segurança nas penitenciárias</p>
+                                        <p>• Ressocialização e reabilitação</p>
+                                        <p>• Direitos das pessoas encarceradas</p>
+                                        <p>• Condições carcerárias e humanidade</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-purple-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Composição Padrão da Redação</h3>
+                            <p class="text-slate-700 mb-4">Cada proposta segue uma estrutura padrão:</p>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li><i class="fa-solid fa-file-lines text-purple-600 mr-2"></i><strong>Textos de Apoio:</strong> Geralmente 2-4 textos para leitura obrigatória</li>
+                                <li><i class="fa-solid fa-tasks text-purple-600 mr-2"></i><strong>Roteiro Específico:</strong> Lista de tópicos que DEVEM ser abordados (imperativamente)</li>
+                                <li><i class="fa-solid fa-pen text-purple-600 mr-2"></i><strong>Limite de Linhas:</strong> Geralmente entre 25-30 linhas de redação</li>
+                                <li><i class="fa-solid fa-check-double text-purple-600 mr-2"></i><strong>Avaliação de Conteúdo:</strong> O foco principal (90-95% da nota)</li>
+                                <li><i class="fa-solid fa-file text-purple-600 mr-2"></i><strong>Folha de Redação:</strong> Folha própria para escrita final (em caligrafia legível)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-indigo-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Como Abordar Cada Proposta</h3>
+                            <div class="space-y-3 text-slate-700 text-sm">
+                                <div class="bg-indigo-50 p-3 rounded">
+                                    <strong>Passo 1 - Leia Tudo:</strong> Textos de apoio, roteiro, proposição. Não se apresse.
+                                </div>
+                                <div class="bg-indigo-50 p-3 rounded">
+                                    <strong>Passo 2 - Identifique Tópicos:</strong> Quantos pontos você deve abordar? 3? 4? 5?
+                                </div>
+                                <div class="bg-indigo-50 p-3 rounded">
+                                    <strong>Passo 3 - Extraia do Texto:</strong> Que informações nos textos você pode usar em cada tópico?
+                                </div>
+                                <div class="bg-indigo-50 p-3 rounded">
+                                    <strong>Passo 4 - Esquematize:</strong> Faça seu esqueleto antes de escrever
+                                </div>
+                                <div class="bg-indigo-50 p-3 rounded">
+                                    <strong>Passo 5 - Desenvolva:</strong> Escreva respeitando rigidamente o roteiro
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-orange-500">
+                            <h3 class="font-bold text-lg text-slate-900 mb-3">Erros Fatais em Propostas</h3>
+                            <ul class="space-y-2 text-slate-700 text-sm">
+                                <li>❌ <strong>Não ler os textos:</strong> Perderá informações e argumentos</li>
+                                <li>❌ <strong>Desviar do roteiro:</strong> Custo mínimo de 30% da nota perdida</li>
+                                <li>❌ <strong>Abordar 2 tópicos quando solicitava 3:</strong> Incompleto automaticamente</li>
+                                <li>❌ <strong>Copiar literalmente dos textos:</strong> É plágio parcial, penalizado</li>
+                                <li>❌ <strong>Falar sobre instituição errada:</strong> Se é PC, não fale de PM</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-pink-50 border border-pink-200 rounded-lg p-6">
+                            <h3 class="font-bold text-slate-900 mb-2">📋 Dica Ouro</h3>
+                            <p class="text-slate-700 text-sm mb-3">Sempre responda ao roteiro proposto. Não fuja dos tópicos solicitados - isso resultará em perda significativa de pontos.</p>
+                            <p class="text-slate-700 text-sm mb-3">Leia os textos de apoio com atenção e use-os como embasamento para suas argumentações. Eles não são decorativos.</p>
+                            <p class="text-slate-700 text-sm"><strong>Tempo de leitura:</strong> Dedique os primeiros 5-7 minutos apenas livremente o material. Vale a pena!</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // Data tips
+        const tips = {
+            'desenvolvimento': [
+                { title: 'Tópico Frasal', desc: 'Inicie cada parágrafo com a ideia central clara' },
+                { title: 'Evidências', desc: 'Sempre sustente com exemplos, dados ou referências' },
+                { title: 'Coesão', desc: 'Use conectivos para ligar desenvolvimentos' }
+            ],
+            'conclusao': [
+                { title: 'Retome a Tese', desc: 'Reafirme sua posição inicial de forma sintética' },
+                { title: 'Sintetize', desc: 'Resuma sem repetir literalmente o desenvolvimento' },
+                { title: 'Proponha', desc: 'Termine com soluções ou perspectivas futuras' }
+            ],
+            'textos-referencia': [
+                { title: 'Não é Decorativo', desc: 'Textos de apoio devem fundamentar seus argumentos' },
+                { title: 'Leitura Estratégica', desc: 'Destaque ideias-chave e dados utilizáveis' },
+                { title: 'Sem Plágio', desc: 'Reescreva com suas palavras, parafraseie ideias' }
+            ],
+            'conectivos': [
+                { title: 'Função Clara', desc: 'Cada conectivo tem um propósito - use corretamente' },
+                { title: 'Sem Excesso', desc: 'Máximo um conectivo a cada 2-3 sentenças' },
+                { title: 'Coesão Garantida', desc: 'Conectivos bem usados melhoram fluidez do texto' }
+            ],
+            'folha-redacao': [
+                { title: 'Letra Legível', desc: 'Avaliador precisa ler facilmente - letra clara' },
+                { title: 'Sem Rasuras', desc: 'Um traço fino ok, mas evite borrões e manchas' },
+                { title: 'Distribuição', desc: 'Planeje o espaço para caber confortavelmente' }
+            ],
+            'pontuacao-avancada': [
+                { title: 'Cada Sinal = Função', desc: 'Pontuação tem papel semântico específico' },
+                { title: 'Ponto e Vírgula é Chave', desc: 'Mostra domínio sintático impressionante' },
+                { title: 'Não Abuse', desc: 'Parênteses e reticências com moderação' }
+            ],
+            'nocoes-gerais': [
+                { title: 'Conteúdo vs. Gramática', desc: '90-95% da nota é baseada em conteúdo na CESP' },
+                { title: 'Roteiro Específico', desc: 'Sempre há um roteiro a ser seguido, diferente de outras bancas' },
+                { title: 'Banca Atípica', desc: 'CESP tem cobranças e correção diferentes das demais' }
+            ],
+            'introducao': [
+                { title: 'Abertura Impactante', desc: 'A introdução deve contextualizar sem ser genérica' },
+                { title: 'Tese Clara', desc: 'Deixe claro qual será sua abordagem dos tópicos' },
+                { title: 'Evitar Chavões', desc: 'Não abra com frases como "A educação é importante"' }
+            ],
+            'regras-escrita': [
+                { title: 'Regência Verbal', desc: 'Memorize verbos problemáticos como "corroborar"' },
+                { title: 'Onde vs. Em que', desc: 'Use "onde" para lugar físico, "em que" para situações' },
+                { title: 'Pontuação com Função', desc: 'Cada sinal de pontuação tem seu propósito específico' }
+            ],
+            'esqueletos': [
+                { title: 'Planeje Antes', desc: 'Um bom esqueleto economiza tempo e reduz erros' },
+                { title: 'Adaptável', desc: 'Customize seu esqueleto para cada proposta específica' },
+                { title: 'Coesão Garantida', desc: 'Esqueletos bem estruturados garantem textos coesos' }
+            ],
+            'gramatica': [
+                { title: 'Conjugação Verbal', desc: 'Mantenha o tempo verbal consistente no texto' },
+                { title: 'Concordância', desc: 'Sempre revise concordância nominal e verbal' },
+                { title: 'Conectivos', desc: 'Use conectivos para ligar ideias de forma clara' }
+            ],
+            'gestao-tempo': [
+                { title: 'Leitura: 3-5 min', desc: 'Tempo para entender a proposta completamente' },
+                { title: 'Planejamento: 5-7 min', desc: 'Elabore seu esqueleto com cuidado' },
+                { title: 'Revisão: 3-5 min', desc: 'Não pule esta etapa fundamental' }
+            ],
+            'propostas-redacao': [
+                { title: 'Responda Roteiro', desc: 'Desviar custará pontos - é mandatório seguir' },
+                { title: 'Use Textos', desc: 'Apoio não é decorativo - use para embasar argumentos' },
+                { title: '5 Passos', desc: 'Leia tudo → Identifique → Extraia → Esquematize → Desenvolva' }
+            ]
+        };
+
+        const searchInput = document.getElementById('searchInput');
+        const topicList = document.getElementById('topicList');
+        const contentContainer = document.getElementById('contentContainer');
+        const tipsContainer = document.getElementById('tipsContainer');
+        const headerTitle = document.getElementById('headerTitle');
+        const tabContent = document.getElementById('tabContent');
+        const tabTips = document.getElementById('tabTips');
+        const mobileOpenBtn = document.getElementById('mobileOpenBtn');
+        const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        let currentSelection = null;
+
+        function renderTopicList(filtered = false) {
+            topicList.innerHTML = '';
+            const query = searchInput.value.toLowerCase();
+            const toShow = filtered ? topics.filter(item => item.title.toLowerCase().includes(query)) : topics;
+
+            toShow.forEach(topic => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = `block px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer a11y-focus ${
+                    currentSelection === topic.id 
+                        ? 'bg-red-100 text-red-700' 
+                        : 'text-slate-700 hover:bg-slate-100'
+                }`;
+                link.setAttribute('role', 'button');
+                link.setAttribute('aria-label', `Ver ${topic.title}`);
+                link.innerHTML = `<i class="fa-solid ${topic.icon} mr-2"></i>${topic.title}`;
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    selectTopic(topic);
+                    if (window.innerWidth < 768) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                });
+
+                link.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectTopic(topic);
+                    }
+                });
+
+                topicList.appendChild(link);
+            });
+        }
+
+        function selectTopic(topic) {
+            currentSelection = topic.id;
+            headerTitle.textContent = topic.title;
+            renderContent(topic);
+            renderTips(topic);
+            renderTopicList(!!searchInput.value);
+            
+            // Show content tab by default
+            contentContainer.classList.remove('hidden');
+            tipsContainer.classList.add('hidden');
+            tabContent.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            tabContent.classList.remove('text-slate-500', 'hover:text-slate-700');
+            tabTips.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+            tabTips.classList.add('text-slate-500', 'hover:text-slate-700');
+        }
+
+        function renderContent(topic) {
+            contentContainer.innerHTML = topic.content;
+        }
+
+        function renderTips(topic) {
+            const topicTips = tips[topic.id] || [];
+            tipsContainer.innerHTML = `
+                <h2 class="text-3xl font-bold text-slate-900 mb-6">Dicas Rápidas: ${topic.title}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${topicTips.map((tip, idx) => `
+                        <div class="bg-white rounded-lg p-6 border-l-4 border-red-500 hover:shadow-lg transition-shadow">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-lightbulb text-red-600 text-xl mt-1 shrink-0"></i>
+                                <div>
+                                    <h3 class="font-bold text-slate-900">${tip.title}</h3>
+                                    <p class="text-slate-600 text-sm mt-2">${tip.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            renderTopicList(true);
+        });
+
+        // Tab switching
+        tabContent.addEventListener('click', () => {
+            contentContainer.classList.remove('hidden');
+            tipsContainer.classList.add('hidden');
+            tabContent.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            tabContent.classList.remove('text-slate-500', 'hover:text-slate-700');
+            tabTips.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+            tabTips.classList.add('text-slate-500', 'hover:text-slate-700');
+        });
+
+        tabTips.addEventListener('click', () => {
+            contentContainer.classList.add('hidden');
+            tipsContainer.classList.remove('hidden');
+            tabTips.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            tabTips.classList.remove('text-slate-500', 'hover:text-slate-700');
+            tabContent.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+            tabContent.classList.add('text-slate-500', 'hover:text-slate-700');
+        });
+
+        // Mobile menu
+        mobileOpenBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+
+        mobileCloseBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Init topic list
+        renderTopicList();
+
+        // Accessibility styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .a11y-focus:focus-visible {
+                outline: 2px solid #dc2626;
+                outline-offset: 2px;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

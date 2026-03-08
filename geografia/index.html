@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografia - Mapas & Questões</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+    <script src="../assets/js/study-map-app.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-hidden h-screen flex">
+
+    <button id="mobileOpenBtn" class="md:hidden fixed bottom-6 right-6 z-50 bg-green-600 text-white p-4 rounded-full shadow-xl hover:bg-green-700 transition-colors">
+        <i class="fa-solid fa-bars text-xl"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-green-900 text-white shrink-0">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-globe text-green-300"></i>
+                    Geografia
+                </h1>
+                <p class="text-xs text-green-200 mt-1 font-medium">Mapas & Questões</p>
+            </div>
+            <button id="mobileCloseBtn" class="md:hidden text-green-200 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 shrink-0">
+            <a href="../index.html" class="text-sm text-green-600 hover:text-green-800 font-semibold mb-3 inline-block">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </a>
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Procurar assunto..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-colors">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2" id="materiasCount">
+                Tópicos
+            </h2>
+            <nav id="subjectList" class="space-y-1.5 pb-20 md:pb-0">
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 shadow-sm justify-between shrink-0">
+            <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 w-1/3">
+                <i class="fa-solid fa-table-columns"></i>
+                <span id="headerTitle" class="truncate font-medium"></span>
+            </div>
+
+            <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto justify-center shrink-0">
+                <button id="tabMap" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="hidden sm:inline">Mapa Mental</span>
+                    <span class="sm:hidden">Teoria</span>
+                </button>
+                <button id="tabQuiz" class="flex items-center gap-2 px-4 md:px-6 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-700">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span class="hidden sm:inline">Questões Práticas</span>
+                    <span class="sm:hidden">Questões</span>
+                </button>
+            </div>
+
+            <div class="w-1/3 hidden md:block"></div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative bg-grid-pattern">
+            <div id="mapContainer" class="max-w-5xl mx-auto pb-20 md:pb-12 fade-in">
+            </div>
+
+            <div id="quizContainer" class="hidden h-full fade-in pb-20">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mindMapData = [
+            {
+                id: 'geografia_fisica', title: 'Geografia Fisica', color: 'bg-green-500',
+                nodes: [
+                    { title: 'Relevo Terrestre', content: 'Formas do terreno: montanhas, planaltos, depressoes.' },
+                    { title: 'Clima', content: 'Condicoes climaticas: tropical, temperado, polar, arido.' },
+                    { title: 'Vegetacao', content: 'Biomas: floresta, cerrado, tundra, desertos.' },
+                    { title: 'Hidrografia', content: 'Rios, lagos, oceanos e sua importancia.' }
+                ]
+            },
+            {
+                id: 'geografia_brasil', title: 'Geografia do Brasil', color: 'bg-emerald-500',
+                nodes: [
+                    { title: 'Localizacao e Limites', content: 'Posicao geografica, fronteiras, dimensoes territoriais.' },
+                    { title: 'Relevo Brasileiro', content: 'Planaltos, depressoes, bacias sedimentares.' },
+                    { title: 'Clima Tropical', content: 'Caracteristicas do clima tropical e subtropical.' },
+                    { title: 'Biomas Brasileiros', content: 'Floresta Amazonica, Cerrado, Mata Atlantica, Caatinga.' }
+                ]
+            },
+            {
+                id: 'geografia_alagoas', title: 'Geografia de Alagoas', color: 'bg-teal-500',
+                nodes: [
+                    { title: 'Localizacao Regional', content: 'Estado no Nordeste Brasileiro, vizinhanca.' },
+                    { title: 'Relevo de Alagoas', content: 'Litoral, Vale, Sertao, planaltos.' },
+                    { title: 'Rios de Alagoas', content: 'Rio Sao Francisco, demais cursos dagua.' },
+                    { title: 'Economia Regional', content: 'Agricultura, turismo, industrializacao.' }
+                ]
+            },
+            {
+                id: 'geografia_politica', title: 'Geografia Politica', color: 'bg-cyan-500',
+                nodes: [
+                    { title: 'Territorio e Soberania', content: 'Conceitos de territorio e poder estatal.' },
+                    { title: 'Mundializacao', content: 'Globalizacao e seus efeitos territoriais.' },
+                    { title: 'Geopolitica', content: 'Conflitos, poder internacional, blocos regionais.' },
+                    { title: 'Cidades e Regiao', content: 'Urbanizacao, metropoles, regios geograficas.' }
+                ]
+            },
+            {
+                id: 'geografia_economia', title: 'Geografia Economica', color: 'bg-sky-500',
+                nodes: [
+                    { title: 'Producao e Consumo', content: 'Organizacao espacial da producao, mercados.' },
+                    { title: 'Recursos Naturais', content: 'Extracao, uso sustentavel, conservacao.' },
+                    { title: 'Transportes e Comunicação', content: 'Redes de transporte, tecnologia, logistica.' },
+                    { title: 'Desenvolvimento Regional', content: 'Desigualdades, desenvolvimento desigual.' }
+                ]
+            },
+            {
+                id: 'geografia_cultural', title: 'Geografia Cultural', color: 'bg-blue-500',
+                nodes: [
+                    { title: 'Cultura e Identidade', content: 'Expresoes culturais, diversidade, tradicoes.' },
+                    { title: 'Religioes no Mundo', content: 'Distribuicao geografica, influencias culturais.' },
+                    { title: 'Paisagem Cultural', content: 'Transformacao da paisagem por acao humana.' },
+                    { title: 'Territorio e Cultura', content: 'Apropriacoes culturais do espaco geografico.' }
+                ]
+            }
+        ];
+
+        const questionsData = [
+            { id: 1, subjectId: 'geografia_brasil', text: 'Qual e o maior rio do Brasil em termos de vazao?', options: ['Rio Paraná', 'Rio Sao Francisco', 'Rio Amazonas', 'Rio Negro'], correctAnswer: 2, explanation: 'Correto! O Rio Amazonas e o maior rio do Brasil em termos de vazao de agua, correspondendo a aproximadamente 20% da agua doce mundial.' },
+            { id: 2, subjectId: 'geografia_alagoas', text: 'Em qual regiao do Brasil esta localizado o estado de Alagoas?', options: ['Regiao Sul', 'Regiao Nordeste', 'Regiao Centro-Oeste', 'Regiao Norte'], correctAnswer: 1, explanation: 'Correto! Alagoas esta localizado na Regiao Nordeste do Brasil, fazendo fronteira com Pernambuco e Sergipe.' }
+        ];
+
+        StudyMapApp.init({
+            mindMapData,
+            questionsData,
+            countLabel: (document.getElementById("materiasCount")?.textContent || "Topicos").trim()
+        });
+    </script>
+</body>
+</html>
