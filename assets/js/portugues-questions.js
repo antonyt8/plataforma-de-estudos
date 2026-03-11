@@ -526,15 +526,15 @@ window.PortuguesQuestions = [
   {
     "id": 41,
     "subjectId": "oracoes_subordinadas_substantivas",
-    "text": "Questao de fixacao: qual alternativa melhor resume o topico \"oracoes_subordinadas_substantivas\"?",
+    "text": "No período \"É necessário que todos revisem a matéria\", a oração iniciada por \"que\" classifica-se como:",
     "options": [
-      "Resumo incorreto do conteudo",
-      "Resumo parcialmente correto",
-      "Resumo correto com base no mapa mental",
-      "Nao ha relacao com o topico"
+      "Oração subordinada adjetiva explicativa",
+      "Oração subordinada substantiva subjetiva",
+      "Oração subordinada substantiva objetiva direta",
+      "Oração subordinada adverbial final"
     ],
-    "correctAnswer": 2,
-    "explanation": "Correto! Revise os pontos-chave do mapa mental desse assunto para consolidar a aprendizagem."
+    "correctAnswer": 1,
+    "explanation": "Correto! A oração \"que todos revisem a matéria\" exerce função de sujeito do predicado \"É necessário\", por isso é subordinada substantiva subjetiva."
   }
 ];
 
