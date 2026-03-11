@@ -230,15 +230,23 @@
 
       filtered.forEach(function (subject) {
         const isActive = activeSubject.id === subject.id;
+        const subjectHref = typeof config.subjectHrefResolver === 'function' ? config.subjectHrefResolver(subject) : null;
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.setAttribute('role', 'option');
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        btn.setAttribute('aria-label', 'Abrir topico ' + subject.title);
+        btn.setAttribute('aria-label', subjectHref ? 'Abrir pagina do topico ' + subject.title : 'Abrir topico ' + subject.title);
         btn.setAttribute('data-subject-option', 'true');
         btn.dataset.subjectId = subject.id;
+        if (subjectHref) {
+          btn.dataset.subjectHref = subjectHref;
+        }
         btn.tabIndex = 0;
         btn.onclick = function () {
+          if (subjectHref) {
+            window.location.href = subjectHref;
+            return;
+          }
           selectSubject(subject.id);
           btn.focus();
         };

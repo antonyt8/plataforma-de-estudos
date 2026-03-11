@@ -604,6 +604,7 @@
         StudyMapApp.init({
             mindMapData,
             questionsData,
+            subjectHrefResolver: (subject) => `assuntos/${encodeURIComponent(subject.id)}.html`,
             countLabel: (document.getElementById("materiasCount")?.textContent || "Topicos").trim()
         });
     </script>
