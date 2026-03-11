@@ -38,6 +38,13 @@
     <main class="space-y-4"><section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Período Simples</h3><p class="text-slate-700 leading-relaxed">Possui apenas uma oração (oração absoluta), ou seja, um unico verbo/nucleo verbal.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>Estudei hoje.</li><li>Os alunos chegaram cedo.</li></ul></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Período Composto</h3><p class="text-slate-700 leading-relaxed">Possui duas ou mais orações (mais de um nucleo verbal).</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>Acordei cedo e estudei muito.</li><li>Quando cheguei, a aula ja havia comecado.</li></ul><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Por Coordenacao</h4><p class="text-slate-700 leading-relaxed">Orações independentes entre si (não exercem função sintática umas nas outras).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Por Subordinacao</h4><p class="text-slate-700 leading-relaxed">Ha dependencia sintática entre principal e subordinada.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Misto</h4><p class="text-slate-700 leading-relaxed">Pode haver coordenacao e subordinacao no mesmo período.</p></section></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -50,5 +57,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

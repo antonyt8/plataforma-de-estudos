@@ -42,6 +42,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Ponto e Virgula</h3><p class="text-slate-700 leading-relaxed">Separa itens de enumeração complexa e periodos coordenados extensos.</p></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Travessao e Parenteses</h3><p class="text-slate-700 leading-relaxed">Marcam insercoes explicativas/comentarios incidentais.</p></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -54,5 +61,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

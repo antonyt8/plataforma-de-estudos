@@ -40,6 +40,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Facto x Hipotese</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Facto</h4><p class="text-slate-700 leading-relaxed">Acao incontestavel, exprime certeza.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Hipotese</h4><p class="text-slate-700 leading-relaxed">Possibilidade. Geralmente marcada por verbos no subjuntivo ou futuro do preterito.</p></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Estrategias de Resolucao</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Leia o comando antes</h4><p class="text-slate-700 leading-relaxed">Identifique o que a banca quer: ideia central, inferencia, intencao do autor, efeito de sentido etc.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Volte ao trecho-chave</h4><p class="text-slate-700 leading-relaxed">Toda alternativa correta deve ter ancoragem textual (direta ou inferencial).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Desconfie de absolutos</h4><p class="text-slate-700 leading-relaxed">Termos como &quot;sempre&quot; e &quot;nunca&quot; costumam tornar alternativas erradas.</p></section></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -52,5 +59,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

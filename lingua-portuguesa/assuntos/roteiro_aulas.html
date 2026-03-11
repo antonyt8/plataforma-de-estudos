@@ -47,6 +47,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Aula 43 - Reescritura</h3><p class="text-slate-700 leading-relaxed">Parafrase, paralelismo e equivalencia de sentido.</p><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Pegadinhas de Banca</h4><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">troca de conectivo com mudanca de sentido</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">quebra de paralelismo</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">mudanca de foco semantico</span></div></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Checklist de Revisão</h4><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">mantenho sentido nuclear</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">preservo regencia/concordancia</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">valido transformacoes estruturais</span></div></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Plano de Revisão 7 Dias</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Dias 1-2</h4><p class="text-slate-700 leading-relaxed">Aulas 27, 28, 29/30 (morfologia).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Dias 3-4</h4><p class="text-slate-700 leading-relaxed">Aulas 32, 33, 35 (sintaxe e concordancia).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Dias 5-6</h4><p class="text-slate-700 leading-relaxed">Aulas 38, 39, 42 (texto).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Dia 7</h4><p class="text-slate-700 leading-relaxed">Aula 43 + revisão geral + bateria de questões.</p></section></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -59,5 +66,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

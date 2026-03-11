@@ -42,6 +42,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Fixacao Rapida (Resumo)</h3><p class="text-slate-700 leading-relaxed">Padrao recorrente em prova: diferenciar sujeito simples, composto, oculto, indeterminado e inexistente.</p><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Exemplo 1</h4><p class="text-slate-700 leading-relaxed">Temos vagas para vendedores = sujeito oculto (nos). Existem vagas = sujeito simples (vagas). Ha vagas = sujeito inexistente.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Exemplo 2</h4><p class="text-slate-700 leading-relaxed">Vive-se bem em apartamentos = sujeito indeterminado (SE indeterminador).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Exemplo 3</h4><p class="text-slate-700 leading-relaxed">A maioria dos alunos chegou atrasada = sujeito simples (nucleo: maioria).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Exemplo 4</h4><p class="text-slate-700 leading-relaxed">Choveram reclamacoes = sujeito simples (reclamacoes), pois uso figurado.</p></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Gabarito-Guia (Pontos-Chave)</h3><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Haver=existir -&gt; oração sem sujeito</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Fazer (tempo/clima) -&gt; oração sem sujeito</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">3a plural sem referencia -&gt; sujeito indeterminado</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">SE com VTI/VI/VL -&gt; sujeito indeterminado</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">SE com VTD/VTDI -&gt; particula apassivadora</span></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -54,5 +61,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

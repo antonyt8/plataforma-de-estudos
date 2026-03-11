@@ -38,6 +38,13 @@
     <main class="space-y-4"><section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Adverbio (Invariavel)</h3><p class="text-slate-700 leading-relaxed">Modifica o verbo, adjetivo ou adverbio.</p><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Circunstancias</h4><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Tempo (cedo)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Modo (bem)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Negação (não)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Intensidade (muito)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Lugar (aqui)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Dúvida (talvez)</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Afirmação (sim)</span></div></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Locucao Adverbial</h4><p class="text-slate-700 leading-relaxed">Conjunto de palavras com valor de adverbio.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>de repente</li><li>a noite</li><li>com cuidado</li></ul></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Interjeição</h3><p class="text-slate-700 leading-relaxed">Palavra invariavel que exprime emocao, apelo ou estado de espirito.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>Ah!</li><li>Coragem!</li><li>Ui!</li><li>Ue!</li><li>Nossa!</li></ul></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -50,5 +57,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

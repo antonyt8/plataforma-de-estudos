@@ -39,6 +39,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Locucao Adjetiva</h3><p class="text-slate-700 leading-relaxed">Expressao preposicionada com valor de adjetivo.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>amor de mae = amor materno</li></ul></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Grau</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Comparativo</h4><p class="text-slate-700 leading-relaxed">Superioridade, inferioridade e igualdade.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>mais alto que</li><li>tao alto quanto</li></ul></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Superlativo</h4><p class="text-slate-700 leading-relaxed">Absoluto (sintetico/analitico) e relativo.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>belissimo</li><li>muito belo</li><li>o mais belo da turma</li></ul></section></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -51,5 +58,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

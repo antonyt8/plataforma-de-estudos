@@ -41,6 +41,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Injuncao</h3><p class="text-slate-700 leading-relaxed">Instrui ou orienta procedimentos; uso frequente de imperativo e infinitivo.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>Receitas, manuais, editais, instrucoes.</li></ul></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Dica de Prova</h3><p class="text-slate-700 leading-relaxed">Um genero textual pode misturar tipologias, mas sempre ha tipologia predominante.</p></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -53,5 +60,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

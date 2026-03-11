@@ -41,6 +41,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Transformacoes recorrentes</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Voz ativa &lt;-&gt; passiva</h4><p class="text-slate-700 leading-relaxed">Muda foco informacional mantendo nucleo de sentido.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Oração reduzida &lt;-&gt; desenvolvida</h4><p class="text-slate-700 leading-relaxed">Alteracao estrutural sem perda semantica relevante.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Discurso direto &lt;-&gt; indireto</h4><p class="text-slate-700 leading-relaxed">Ajusta pronomes, tempos e deiticos.</p></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Criterio de Correto/Errado</h3><p class="text-slate-700 leading-relaxed">Reescrita correta preserva sentido, regencia, concordancia e pontuacao nuclear do período.</p></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -53,5 +60,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

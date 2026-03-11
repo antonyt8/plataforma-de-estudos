@@ -40,6 +40,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Enclise</h3><p class="text-slate-700 leading-relaxed">Pronome DEPOIS do verbo, comum no inicio de frase e após infinitivo/imperativo afirmativo.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>Entregaram-me o edital.</li><li>Faca-o agora.</li></ul></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Palavras Atrativas (proclise)</h3><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">não</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">nunca</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">jamais</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">que</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">quem</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">quando</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">se</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">talvez</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">todos os indefinidos</span></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -52,5 +59,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

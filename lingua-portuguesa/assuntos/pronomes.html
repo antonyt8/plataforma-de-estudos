@@ -43,6 +43,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Pronomes Relativos</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Que / O qual</h4><p class="text-slate-700 leading-relaxed">Retomam antecedente e iniciam oração adjetiva.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Cujo(s)</h4><p class="text-slate-700 leading-relaxed">Indica posse (nunca usar artigo depois dele!).</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Onde</h4><p class="text-slate-700 leading-relaxed">Apenas para lugar fisico; para ideias, prefira em que/no qual.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Quanto</h4><p class="text-slate-700 leading-relaxed">Usado com antecedente tudo/todos/todas.</p></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Pronomes de Tratamento</h3><p class="text-slate-700 leading-relaxed">Emprego formal e concordancia na 3a pessoa.</p><p class="text-sm font-medium text-slate-600 mt-3">Palavras-chave</p><div class="flex flex-wrap gap-2 mt-2"><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Vossa Excelencia</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Vossa Senhoria</span><span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-xs">Você</span></div></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -55,5 +62,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>

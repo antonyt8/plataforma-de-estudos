@@ -41,6 +41,13 @@
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Flexao de Numero</h3><div class="mt-4 space-y-3"><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Regra Basica</h4><p class="text-slate-700 leading-relaxed">Acrescenta-se -s, com adaptacoes foneticas conforme a terminacao.</p></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Compostos - ambos variam</h4><p class="text-slate-700 leading-relaxed">Subst+Subst, Subst+Adj, Num+Subst.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>tenentes-coroneis</li><li>segundas-feiras</li></ul></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Compostos - varia o 1o</h4><p class="text-slate-700 leading-relaxed">Quando o 2o termo limita/finaliza o 1o.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>salarios-familia</li></ul></section><section class="content-section ml-4 border-l-2 border-slate-200 pl-4"><h4 class="font-semibold text-slate-800 mb-2">Compostos invariaveis</h4><p class="text-slate-700 leading-relaxed">Verbo+adv, verbos opostos e algumas estruturas lexicalizadas.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>os perde-ganha</li></ul></section></div></section>
 <section class="content-section"><h3 class="font-semibold text-slate-800 mb-2">Substantivacao</h3><p class="text-slate-700 leading-relaxed">Qualquer classe pode virar substantivo com determinante.</p><p class="text-sm font-medium text-slate-600 mt-3">Exemplos</p><ul class="list-disc pl-6 mt-2 space-y-1"><li>O belo encanta.</li><li>O cantar e terapeutico.</li></ul></section></main>
 
+    <section class="mt-8">
+      <div class="content-section">
+        <h3 class="font-semibold text-slate-800 mb-3">Questoes Do Assunto</h3>
+        <div id="questionsSection"></div>
+      </div>
+    </section>
+
     
     <section class="nav-buttons">
       <a href="../index.html" class="nav-btn nav-btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
@@ -53,5 +60,16 @@
       <p>Língua Portuguesa | <a href="../../index.html" class="text-blue-600 hover:underline">Voltar ao Dashboard</a></p>
     </footer>
   </div>
+
+  <script src="../../assets/js/portugues-questions.js"></script>
+  <script>
+    (function () {
+      var fileName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
+      var subjectId = fileName.replace(/\.html$/i, '');
+      if (window.renderPortuguesQuestions) {
+        window.renderPortuguesQuestions(subjectId, 'questionsSection');
+      }
+    })();
+  </script>
 </body>
 </html>
