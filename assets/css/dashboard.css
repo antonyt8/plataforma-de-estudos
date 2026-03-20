@@ -10,6 +10,62 @@
   --shadow: 0 18px 40px rgba(22, 32, 51, 0.12);
 }
 
+  html.dark {
+    --bg: #0f1419;
+    --panel: #1a1f2e;
+    --ink: #e8eef7;
+    --muted: #a0aac0;
+    --line: #2d3542;
+    --brand: #4a90e2;
+    --brand-2: #4fa3a0;
+    --chip: #1f2d4d;
+    --shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  }
+
+/* Dark Body Background */
+html.dark body {
+  background: radial-gradient(circle at 8% 9%, rgba(74, 144, 226, 0.08), transparent 34%),
+    radial-gradient(circle at 90% 85%, rgba(79, 163, 160, 0.08), transparent 38%),
+    var(--bg);
+}
+
+/* Dark Search Input */
+html.dark .search {
+  background: rgba(232, 238, 247, 0.08);
+  border-color: var(--line);
+}
+
+html.dark .search:focus {
+  border-color: var(--brand);
+}
+
+/* Dark Subject Link */
+html.dark .subject-link {
+  background: var(--panel);
+}
+
+html.dark .subject-link:hover {
+  border-color: var(--brand);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Badge */
+html.dark .badge {
+  background: rgba(74, 144, 226, 0.15);
+  color: #86c4ff;
+  border-color: var(--brand);
+}
+
+/* Dark Sidebar Head */
+html.dark .sidebar-head {
+  background: linear-gradient(145deg, #4a90e2, #5a9fee);
+}
+
+/* Dark Mobile Toggle */
+html.dark .mobile-toggle {
+  background: var(--brand);
+}
+
 * {
   box-sizing: border-box;
 }

@@ -50,6 +50,42 @@
   box-shadow: 0 0 0 3px rgba(31, 79, 163, 0.1);
 }
 
+  html.dark .search {
+    background: rgba(232, 238, 247, 0.08);
+    border-color: var(--line);
+  }
+
+  html.dark .search:focus {
+    background: rgba(232, 238, 247, 0.12);
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+  }
+
+/* Subject Link Dark Mode */
+html.dark .subject-link {
+  background: var(--panel);
+}
+
+html.dark .subject-link:hover,
+html.dark .subject-link:focus {
+  border-color: var(--brand);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Badge Dark Mode */
+html.dark .badge {
+  background: rgba(31, 79, 163, 0.2);
+  color: #86c4ff;
+  border-color: var(--brand);
+}
+
+/* Card Dark Mode Adjustments */
+html.dark .card:hover,
+html.dark .card:focus {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  border-color: var(--brand);
+}
+
 .count {
   margin: 0;
   padding: 10px 14px 0;

@@ -27,6 +27,17 @@ html.dark {
   --shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 }
 
+/* Apply theme to body */
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+html {
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
 /* Smooth transition for theme switch */
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -82,39 +93,313 @@ html.dark ::-webkit-scrollbar-thumb {
   background-color: #4a5568;
 }
 
+/* Common container elements */
+main, section, article, aside, div, span {
+  background-color: inherit;
+  color: inherit;
+}
+
 /* Ensure proper contrast in dark mode for commonly used elements */
-html.dark a {
-  color: #4a90e2;
+a {
+  color: var(--brand);
 }
 
-html.dark button {
+button {
   background-color: var(--panel);
   color: var(--ink);
   border-color: var(--line);
 }
 
-html.dark input,
-html.dark textarea,
-html.dark select {
+input,
+textarea,
+select {
   background-color: var(--panel);
   color: var(--ink);
   border-color: var(--line);
 }
 
-/* Code blocks in dark mode */
-html.dark code,
-html.dark pre {
-  background-color: #1a1f2e;
-  color: #a0aac0;
-  border-color: #2d3542;
-}
-
-/* Tables in dark mode */
-html.dark table {
+/* Code blocks */
+code,
+pre {
+  background-color: var(--chip);
+  color: var(--ink);
   border-color: var(--line);
 }
 
-html.dark th,
-html.dark td {
+/* Tables */
+table {
   border-color: var(--line);
 }
+
+th,
+td {
+  border-color: var(--line);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ink);
+}
+
+/* Dark mode specific tweaks */
+html.dark {
+  background-color: #0f1419;
+}
+
+html.dark body {
+  background-color: #0f1419;
+  color: #e8eef7;
+}
+
+/* Neutral backgrounds for panels */
+.panel, .card, .container {
+  background-color: var(--panel);
+  color: var(--ink);
+}
+
+/* Backgrounds for states */
+.bg-white {
+  background-color: var(--panel) !important;
+  color: var(--ink) !important;
+}
+
+.bg-slate-50 {
+  background-color: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+/* Utility: ensure text is always readable */
+.text-slate-800 {
+  color: var(--ink) !important;
+}
+
+.text-slate-700 {
+  color: var(--muted) !important;
+}
+
+.text-gray-800 {
+  color: var(--ink) !important;
+}
+
+.text-gray-600 {
+  color: var(--muted) !important;
+}
+
+/* Tailwind color overrides for backgrounds */
+.bg-white {
+  background-color: var(--panel) !important;
+}
+
+.bg-slate-50 {
+  background-color: var(--bg) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--bg) !important;
+}
+
+.bg-gray-100 {
+  background-color: var(--chip) !important;
+}
+
+.bg-slate-100 {
+  background-color: var(--chip) !important;
+}
+
+/* Text color on different backgrounds */
+.bg-slate-50 {
+  color: var(--ink) !important;
+}
+
+.bg-white {
+  color: var(--ink) !important;
+}
+
+/* Specific for content sections with inline styles */
+.content-section {
+  background-color: var(--panel) !important;
+  color: var(--ink) !important;
+  border-left-color: var(--brand) !important;
+}
+
+/* Overr ide for all sections, divs, and articles */
+section {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Breadcrumb styling for dark mode */
+.breadcrumb {
+  color: var(--muted);
+}
+
+.breadcrumb a {
+  color: var(--brand);
+}
+
+/* Navigation buttons */
+.nav-btn-back {
+  background-color: var(--muted) !important;
+  color: white !important;
+}
+
+.nav-btn-prev {
+  background-color: var(--chip) !important;
+  color: var(--brand) !important;
+  border-color: var(--line) !important;
+}
+
+.nav-btn-next {
+  background-color: var(--brand) !important;
+  color: white !important;
+}
+
+/* Styling for highlighted boxes */
+.bg-indigo-50 {
+  background-color: var(--chip) !important;
+}
+
+.text-indigo-600 {
+  color: var(--brand) !important;
+}
+
+/* Tables and lists */
+table tr {
+  border-color: var(--line) !important;
+}
+
+ul, ol {
+  color: var(--ink);
+}
+
+li {
+  color: var(--ink);
+}
+
+/* Blockquote and quote styling */
+blockquote {
+  border-left-color: var(--brand) !important;
+  background-color: var(--chip) !important;
+  color: var(--ink) !important;
+}
+
+/* General text color fixes */
+.text-slate-900 {
+  color: var(--ink) !important;
+}
+
+.text-slate-600 {
+  color: var(--muted) !important;
+}
+
+.text-slate-500 {
+  color: var(--muted) !important;
+}
+
+.border-slate-200 {
+  border-color: var(--line) !important;
+}
+
+.border-slate-300 {
+  border-color: var(--line) !important;
+}
+
+/* Dark mode semantic contrast fixes for Tailwind utility classes */
+html.dark .text-gray-900,
+html.dark .text-slate-900 {
+  color: #f2f6ff !important;
+}
+
+html.dark .text-gray-800,
+html.dark .text-slate-800 {
+  color: #e8eef7 !important;
+}
+
+html.dark .text-gray-700,
+html.dark .text-slate-700 {
+  color: #c7d2e6 !important;
+}
+
+html.dark .text-gray-600,
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #aeb8cc !important;
+}
+
+html.dark .text-blue-900 {
+  color: #d7e8ff !important;
+}
+
+html.dark .text-blue-800 {
+  color: #c4ddff !important;
+}
+
+html.dark .text-blue-700,
+html.dark .text-blue-600,
+html.dark .text-indigo-600 {
+  color: #8fc1ff !important;
+}
+
+html.dark .text-amber-900,
+html.dark .text-amber-800,
+html.dark .text-amber-700,
+html.dark .text-amber-600 {
+  color: #f8d792 !important;
+}
+
+html.dark .text-green-700,
+html.dark .text-emerald-700 {
+  color: #86efac !important;
+}
+
+html.dark .text-red-600 {
+  color: #fda4af !important;
+}
+
+html.dark .bg-gray-50,
+html.dark .bg-slate-50 {
+  background-color: #151c27 !important;
+}
+
+html.dark .bg-gray-100,
+html.dark .bg-slate-100 {
+  background-color: #1c2533 !important;
+}
+
+html.dark .bg-blue-50,
+html.dark .bg-blue-50\/50 {
+  background-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+}
+
+html.dark .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.14) !important;
+}
+
+html.dark .bg-yellow-50 {
+  background-color: rgba(234, 179, 8, 0.16) !important;
+}
+
+html.dark .bg-gray-800 {
+  background-color: #111827 !important;
+}
+
+html.dark .border-blue-100,
+html.dark .border-blue-200,
+html.dark .border-blue-500 {
+  border-color: rgba(96, 165, 250, 0.5) !important;
+}
+
+html.dark .border-green-100,
+html.dark .border-green-200 {
+  border-color: rgba(74, 222, 128, 0.45) !important;
+}
+
+html.dark .border-amber-200,
+html.dark .border-yellow-200 {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+}
+
