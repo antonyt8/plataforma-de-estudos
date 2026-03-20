@@ -30,7 +30,7 @@ window.PortuguesQuestions = [
   {
     "id": 3,
     "subjectId": "funcoes_se",
-    "text": "Em \"Necessita-se de novos materiais para a aula\", a palavra \"se\" classifica-se morfologicamente como:",
+    "text": "Em \"Necessita-se de novos materiais para o estudo\", a palavra \"se\" classifica-se morfologicamente como:",
     "options": [
       "Particula Apassivadora",
       "Pronome Reflexivo",
@@ -473,7 +473,7 @@ window.PortuguesQuestions = [
   },
   {
     "id": 37,
-    "subjectId": "roteiro_aulas",
+    "subjectId": "roteiro_assuntos",
     "text": "Em questao de reescritura, o criterio principal para considerar uma alternativa correta e:",
     "options": [
       "manter a mesma ordem de palavras",
@@ -486,7 +486,7 @@ window.PortuguesQuestions = [
   },
   {
     "id": 38,
-    "subjectId": "roteiro_aulas",
+    "subjectId": "roteiro_assuntos",
     "text": "A oposicao \"texto coeso, porem incoerente\" significa que:",
     "options": [
       "não ha conectivos",
@@ -499,7 +499,7 @@ window.PortuguesQuestions = [
   },
   {
     "id": 39,
-    "subjectId": "roteiro_aulas",
+    "subjectId": "roteiro_assuntos",
     "text": "Em \"Para eu estudar, preciso de silencio\", a escolha de \"eu\" (e não \"mim\") ocorre porque:",
     "options": [
       "eu e mais formal",
@@ -512,13 +512,13 @@ window.PortuguesQuestions = [
   },
   {
     "id": 40,
-    "subjectId": "roteiro_aulas",
+    "subjectId": "roteiro_assuntos",
     "text": "No cronograma sugerido, qual bloco fica para o Dia 7?",
     "options": [
-      "Aulas 27 e 28",
-      "Aulas 32 e 33",
-      "Aula 43 + revisão geral + bateria de questões",
-      "Aula 39 apenas"
+      "Assuntos 27 e 28",
+      "Assuntos 32 e 33",
+      "Revisão geral + bateria de questões",
+      "Tipologia Textual apenas"
     ],
     "correctAnswer": 2,
     "explanation": "Correto! O fechamento e dedicado a reescritura e consolidacao final com questões."
