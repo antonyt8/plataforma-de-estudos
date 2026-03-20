@@ -31,11 +31,17 @@ class ThemeManager {
 
   setTheme(theme) {
     const element = document.documentElement;
-    
-    if (theme === this.DARK_THEME) {
-      element.classList.add('dark');
-    } else {
-      element.classList.remove('dark');
+    const body = document.body;
+    const isDark = theme === this.DARK_THEME;
+
+    element.classList.toggle('dark', isDark);
+    element.setAttribute('data-theme', theme);
+    element.style.colorScheme = isDark ? 'dark' : 'light';
+
+    if (body) {
+      body.classList.toggle('dark', isDark);
+      body.setAttribute('data-theme', theme);
+      body.style.colorScheme = isDark ? 'dark' : 'light';
     }
     
     localStorage.setItem(this.STORAGE_KEY, theme);
